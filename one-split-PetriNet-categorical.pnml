@@ -15,14 +15,14 @@
           <text>p_1</text>
         </name>
       </place>
-      <place id="p_2">
-        <name>
-          <text>p_2</text>
-        </name>
-      </place>
       <place id="sink">
         <name>
           <text>sink</text>
+        </name>
+      </place>
+      <place id="p_2">
+        <name>
+          <text>p_2</text>
         </name>
       </place>
       <transition id="name_1">
@@ -30,33 +30,33 @@
           <text>label_1</text>
         </name>
       </transition>
-      <transition id="name_3" guard="A &lt; 5 || (cat_2 &gt; 0.5 &amp;&amp; A == -1)">
-        <name>
-          <text>label_3</text>
-        </name>
-        <readVariable>A</readVariable>
-        <readVariable>cat_2</readVariable>
-      </transition>
-      <transition id="name_2" guard="A &gt;= 5 || (cat_1 &gt; 0.5 &amp;&amp; A == -1)">
+      <transition id="name_2" guard="(A &gt;= 5 &amp;&amp; cat_1 == 0) || (A == -1 &amp;&amp; cat_1 &gt; 0.5) || (A &gt;= 5 &amp;&amp; cat_1 &gt; 0.5)">
         <name>
           <text>label_2</text>
         </name>
         <readVariable>A</readVariable>
         <readVariable>cat_1</readVariable>
       </transition>
+      <transition id="name_3" guard="(A &lt; 5 &amp;&amp; cat_2 == 0) || (A == -1 &amp;&amp; cat_2 &gt; 0.5) || (A &lt; 5 &amp;&amp; cat_2 &gt; 0.5)">
+        <name>
+          <text>label_3</text>
+        </name>
+        <readVariable>A</readVariable>
+        <readVariable>cat_2</readVariable>
+      </transition>
       <transition id="name_4">
         <name>
           <text>label_4</text>
         </name>
       </transition>
-      <arc id="140442860395872" source="name_2" target="p_2"/>
-      <arc id="140442860393856" source="name_3" target="p_2"/>
-      <arc id="140442860395344" source="source" target="name_1"/>
-      <arc id="140442860392560" source="name_1" target="p_1"/>
-      <arc id="140442860395920" source="p_1" target="name_3"/>
-      <arc id="140442860393424" source="p_1" target="name_2"/>
-      <arc id="140442860395632" source="p_2" target="name_4"/>
-      <arc id="140442860395248" source="name_4" target="sink"/>
+      <arc id="139827334041712" source="source" target="name_1"/>
+      <arc id="139827334041904" source="p_1" target="name_2"/>
+      <arc id="139827334042000" source="p_1" target="name_3"/>
+      <arc id="139827334042096" source="name_2" target="p_2"/>
+      <arc id="139827334041808" source="name_1" target="p_1"/>
+      <arc id="139827334042192" source="name_3" target="p_2"/>
+      <arc id="139827334042288" source="p_2" target="name_4"/>
+      <arc id="139827334042384" source="name_4" target="sink"/>
     </page>
     <finalmarkings>
       <marking>

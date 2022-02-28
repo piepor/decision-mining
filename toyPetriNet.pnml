@@ -30,10 +30,10 @@
           <text>label_2</text>
         </name>
       </transition>
-      <arc id="139832758003552" source="source" target="name_1"/>
-      <arc id="139832758003744" source="p_1" target="name_2"/>
-      <arc id="139832758003840" source="name_2" target="sink"/>
-      <arc id="139832758003648" source="name_1" target="p_1"/>
+      <arc id="140090214875088" source="source" target="name_1"/>
+      <arc id="140090214871152" source="name_2" target="sink"/>
+      <arc id="140090214874752" source="p_1" target="name_2"/>
+      <arc id="140090214875040" source="name_1" target="p_1"/>
     </page>
     <finalmarkings>
       <marking>
