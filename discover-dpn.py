@@ -32,11 +32,13 @@ try:
     net, initial_marking, final_marking = pnml_importer.apply("{}.pnml".format(net_name))
 except:
     raise Exception("File not found")
-log = xes_importer.apply('log-one-split-PetriNet-categorical.xes')
+log = xes_importer.apply('log-{}.xes'.format(net_name)
 for trace in log:
     for event in trace:
-        if "A" in event.keys():
-            event["A"] = float(event["A"])
+        #if "A" in event.keys():
+        for attr in event.keys():
+            try:
+                event[attr] = float(event[attr])
 
 # discover dpn using pm4py library
 #breakpoint()
@@ -70,7 +72,7 @@ for trace in log:
                     last_k_event_dict.update(event_attr)
             old_df = copy.copy(decision_points_data[place_from_event.name])
             new_row = pd.DataFrame.from_dict(last_k_event_dict)
-            #new_row = pd.get_dummies(new_row)
+            new_row = pd.get_dummies(new_row)
             #breakpoint()
             new_row["target"] = event["concept:name"]
             decision_points_data[place_from_event.name] = pd.concat([old_df, new_row], ignore_index=True)
@@ -78,17 +80,17 @@ for trace in log:
         if len(last_k_events) > k:
             last_k_events = last_k_events[-k:]
 # 
-#for decision_point in decision_points_data.keys():
-#    dataset = decision_points_data[decision_point]
-#    X = copy.copy(dataset).drop(columns=['target'])
-#    X.fillna(value={"A": -1, "cat_cat_1": 0, "cat_cat_2": 0}, inplace=True)
-##    X["A"].fillna(-1, inplace=True)
-##    X[["cat_cat_1", "cat_cat_2"]].fillna(0, inplace=True)
-#    y = copy.copy(dataset)['target']
-#    dt = DecisionTreeClassifier()
-#    dt = dt.fit(X, y)
-#    y_pred = dt.predict(X)
-#    print("Train accuracy: {}".format(metrics.accuracy_score(y, y_pred)))
+for decision_point in decision_points_data.keys():
+    dataset = decision_points_data[decision_point]
+    X = copy.copy(dataset).drop(columns=['target'])
+    X.fillna(value={"A": -1, "cat_cat_1": 0, "cat_cat_2": 0}, inplace=True)
+#    X["A"].fillna(-1, inplace=True)
+#    X[["cat_cat_1", "cat_cat_2"]].fillna(0, inplace=True)
+    y = copy.copy(dataset)['target']
+    dt = DecisionTreeClassifier()
+    dt = dt.fit(X, y)
+    y_pred = dt.predict(X)
+    print("Train accuracy: {}".format(metrics.accuracy_score(y, y_pred)))
 
 def extract_rules(dt):
     text_rules = export_text(dt).split('\n')[:-1]
