@@ -29,12 +29,14 @@ net.places.add(p_2)
 # create and add trasitions
 t_1 = PetriNet.Transition("name_1", "label_1")
 t_2 = PetriNet.Transition("name_2", "label_2")
-t_2.properties[petri_properties.TRANS_GUARD] = '(A >= 5 && cat_1 == 0) || (A == -1 && cat_1 > 0.5) || (A >= 5 && cat_1 > 0.5)'
-t_2.properties[petri_properties.READ_VARIABLE] = ['A', 'cat_1']
+#t_2.properties[petri_properties.TRANS_GUARD] = '(A >= 5 && cat_1 == 0) || (A == -1 && cat_1 > 0.5) || (A >= 5 && cat_1 > 0.5)'
+t_2.properties[petri_properties.TRANS_GUARD] = '(A > 0 && A >= 5) || cat == "cat_1"'
+t_2.properties[petri_properties.READ_VARIABLE] = ['A', 'cat']
 t_2.properties[petri_properties.WRITE_VARIABLE] = []
 t_3 = PetriNet.Transition("name_3", "label_3")
-t_3.properties[petri_properties.TRANS_GUARD] = '(A < 5 && cat_2 == 0) || (A == -1 && cat_2 > 0.5) || (A < 5 && cat_2 > 0.5)'
-t_3.properties[petri_properties.READ_VARIABLE] = ['A', 'cat_2']
+#t_3.properties[petri_properties.TRANS_GUARD] = '(A < 5 && cat_2 == 0) || (A == -1 && cat_2 > 0.5) || (A < 5 && cat_2 > 0.5)'
+t_3.properties[petri_properties.TRANS_GUARD] = '(A > 0 && A < 5) || cat == "cat_2"'
+t_3.properties[petri_properties.READ_VARIABLE] = ['A', 'cat']
 t_3.properties[petri_properties.WRITE_VARIABLE] = []
 t_4 = PetriNet.Transition("name_4", "label_4")
 net.transitions.add(t_1)

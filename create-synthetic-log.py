@@ -45,21 +45,25 @@ for i in tqdm(range(NO_TRACES)):
     if choose_var_ex[0] < 3.33:
         a = np.random.uniform(0, 10, 1)
         if a[0] >= 5:
-            ex_cont = {"A": a[0], "cat_1": 0}
+            #ex_cont = {"A": a[0], "cat_1": 0}
+            ex_cont = {"A": a[0], "cat": "None"}
         else:
-            ex_cont = {"A": a[0], "cat_2": 0}
+            #ex_cont = {"A": a[0], "cat_2": 0}
+            ex_cont = {"A": a[0], "cat": "None"}
     elif choose_var_ex[0] > 6.66:
         cat = np.random.uniform(0, 10, 1)
         if cat[0] > 5:
-            ex_cont = {'A': -1, 'cat_1': 1}
+            #ex_cont = {'A': -1, 'cat_1': 1}
+            ex_cont = {'A': -1, 'cat': "cat_1"}
         else:
-            ex_cont = {'A': -1, 'cat_2': 1}
+            #ex_cont = {'A': -1, 'cat_2': 1}
+            ex_cont = {'A': -1, 'cat': "cat_2"}
     else:
         a = np.random.uniform(0, 10, 1)
         if a[0] >= 5:
-            ex_cont = {"A": a[0], "cat_1":1}
+            ex_cont = {"A": a[0], "cat": "cat_1"}
         else:
-            ex_cont = {"A": a[0], "cat_2":1}
+            ex_cont = {"A": a[0], "cat": "cat_2"}
     #breakpoint()
     while dm != final_marking and len(visited_elements) < max_trace_length and len(all_enabled_trans) > 0:
         all_enabled_trans = dpn_semantics.enabled_transitions(net, dm, ex_cont)
@@ -93,9 +97,11 @@ for index, element_sequence in tqdm(enumerate(all_visited)):
             event[activity_key] = element.label
             event[timestamp_key] = curr_timestamp
             for attr in ex_cont.keys():
-                if "cat" in attr:
-                    event["cat"] = copy.copy(attr)
-                elif not ex_cont[attr] == -1:
+#                if "cat" in attr:
+#                    event["cat"] = copy.copy(attr)
+#                elif not ex_cont[attr] == -1:
+#                    event[attr] = copy.copy(ex_cont[attr])
+                if not (ex_cont[attr] == -1 or ex_cont[attr] == 'None'):
                     event[attr] = copy.copy(ex_cont[attr])
             trace.append(event)
             # increase 5 minutes
