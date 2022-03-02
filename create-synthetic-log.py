@@ -2,6 +2,7 @@ import pm4py
 import copy
 import numpy as np
 import datetime
+import argparse
 from tqdm import tqdm
 from random import choice
 from pm4py.objects.log.exporter.xes import exporter as xes_exporter
@@ -13,11 +14,18 @@ from pm4py.objects.petri_net import properties as petri_properties
 from pm4py.objects.petri_net.data_petri_nets.data_marking import DataMarking
 from pm4py.objects.log import obj as log_instance
 from pm4py.util import xes_constants
+from random import choice
 
+# Argument (verbose and net_name)
+parser = argparse.ArgumentParser()
+parser.add_argument("--verbose", help="show more info", default=False, type=bool)
+parser.add_argument("net_name", help="name of the petri net file (without extension)", type=str)
 
-verbose = False
+# parse arguments
+args = parser.parse_args()
+verbose = args.verbosity
+net_name = args.net_name
 verboseprint = print if verbose else lambda *args, **kwargs: None
-net_name =  'one-split-PetriNet-categorical'
 try:
     net, initial_marking, final_marking = pnml_importer.apply("{}.pnml".format(net_name))
 except:
@@ -26,18 +34,12 @@ except:
 def get_ex_cont(model_name):
     if model_name == 'one-split-PetriNet':
         a = np.random.uniform(0, 10, 1)
-        if a[0] >= 5:
-            ex_cont = {"A": a[0]}
-        else:
-            ex_cont = {"A": a[0]}
+        ex_cont = {"A": a[0]}
     elif model_name == 'one-split-PetriNet-categorical':
         choose_var_ex = np.random.uniform(0, 10, 1)
         if choose_var_ex[0] < 3.33:
             a = np.random.uniform(0, 10, 1)
-            if a[0] >= 5:
-                ex_cont = {"A": a[0], "cat": "None"}
-            else:
-                ex_cont = {"A": a[0], "cat": "None"}
+            ex_cont = {"A": a[0], "cat": "None"}
         elif choose_var_ex[0] > 6.66:
             cat = np.random.uniform(0, 10, 1)
             if cat[0] > 5:
@@ -50,6 +52,11 @@ def get_ex_cont(model_name):
                 ex_cont = {"A": a[0], "cat": "cat_1"}
             else:
                 ex_cont = {"A": a[0], "cat": "cat_2"}
+    elif model_name == 'running-example-Will-BPM':
+        a = np.random.uniform(0, 1000, 1)
+        status = choice(["approved", "rejected"])
+        policy_type = choice(["normal", "premium"])
+        ex_cont = {"amount": a[0], "policyType": policy_type, "status": status}
     else:
         raise Exception("Model name not implemented.")
     

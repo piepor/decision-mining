@@ -1,6 +1,7 @@
 import pm4py
 import copy
 import pandas as pd
+import argparse
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn import metrics
 from pm4py.algo.decision_mining import algorithm as decision_mining
@@ -25,20 +26,28 @@ def get_attributes_from_event(event):
     return attributes
 
 
-net_name =  'one-split-PetriNet-categorical'
+# Argument (verbose and net_name)
+parser = argparse.ArgumentParser()
+parser.add_argument("net_name", help="name of the petri net file (without extension)", type=str)
+
+# parse arguments
+args = parser.parse_args()
+net_name = args.net_name
 k = 1
 
 try:
     net, initial_marking, final_marking = pnml_importer.apply("{}.pnml".format(net_name))
 except:
     raise Exception("File not found")
-log = xes_importer.apply('log-{}.xes'.format(net_name)
+log = xes_importer.apply('log-{}.xes'.format(net_name))
 for trace in log:
     for event in trace:
         #if "A" in event.keys():
         for attr in event.keys():
             try:
                 event[attr] = float(event[attr])
+            except:
+                pass
 
 # discover dpn using pm4py library
 #breakpoint()
@@ -83,7 +92,10 @@ for trace in log:
 for decision_point in decision_points_data.keys():
     dataset = decision_points_data[decision_point]
     X = copy.copy(dataset).drop(columns=['target'])
-    X.fillna(value={"A": -1, "cat_cat_1": 0, "cat_cat_2": 0}, inplace=True)
+    if net_name == 'one-split-PetriNet-categorical':
+        X.fillna(value={"A": -1, "cat_cat_1": 0, "cat_cat_2": 0}, inplace=True)
+    elif net_name == 'running-example-Will-BPM':
+        X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, "status_rejected": 0}, inplace=True)
 #    X["A"].fillna(-1, inplace=True)
 #    X[["cat_cat_1", "cat_cat_2"]].fillna(0, inplace=True)
     y = copy.copy(dataset)['target']
