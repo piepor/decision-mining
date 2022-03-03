@@ -23,7 +23,7 @@ parser.add_argument("net_name", help="name of the petri net file (without extens
 
 # parse arguments
 args = parser.parse_args()
-verbose = args.verbosity
+verbose = args.verbose
 net_name = args.net_name
 verboseprint = print if verbose else lambda *args, **kwargs: None
 try:
@@ -80,18 +80,24 @@ for i in tqdm(range(NO_TRACES)):
     visited_elements = []
     all_enabled_trans = [0]
     # execution context
-    ex_cont = get_ex_cont(net_name)
+    ex_cont_total = get_ex_cont(net_name)
     #breakpoint()
     while dm != final_marking and len(visited_elements) < max_trace_length and len(all_enabled_trans) > 0:
-        all_enabled_trans = dpn_semantics.enabled_transitions(net, dm, ex_cont)
+        all_enabled_trans = dpn_semantics.enabled_transitions(net, dm, ex_cont_total)
         for enabled in list(all_enabled_trans):
             if "guard" in enabled.properties:
                 if not dpn_semantics.evaluate_guard(enabled.properties["guard"], enabled.properties["readVariable"], dm.data_dict):
                     all_enabled_trans.discard(enabled)
         #breakpoint()
         trans = choice(list(all_enabled_trans))
-        dm = dpn_semantics.execute(trans, net, dm, ex_cont)
-        visited_elements.append(trans)
+        if "readVariable" in trans.properties:
+            for read_var in trans.properties["readVariable"]:
+                ex_cont[read_var] = ex_cont_total[read_var]
+        else:
+            ex_cont = dict()
+        dm = dpn_semantics.execute(trans, net, dm, ex_cont_total)
+        #breakpoint()
+        visited_elements.append(tuple([trans, ex_cont]))
 
     if dm == final_marking:
         verboseprint("Final marking reached!")
@@ -101,17 +107,19 @@ for i in tqdm(range(NO_TRACES)):
         verboseprint("Max length of traces permitted")
 
     verboseprint("Visited activities: {}".format(visited_elements))
-    all_visited.append(tuple([tuple(visited_elements), ex_cont]))
+    all_visited.append(tuple(visited_elements))
 
 log = log_instance.EventLog()
 for index, element_sequence in tqdm(enumerate(all_visited)):
     trace = log_instance.Trace()
     trace.attributes[case_id_key] = str(index)
-    ex_cont = element_sequence[1]
-    for element in element_sequence[0]:
-        if type(element) is PetriNet.Transition:
+    #breakpoint()
+    for element in element_sequence:
+        event_el = element[0]
+        ex_cont = element[1]
+        if type(event_el) is PetriNet.Transition:
             event = log_instance.Event()
-            event[activity_key] = element.label
+            event[activity_key] = event_el.label
             event[timestamp_key] = curr_timestamp
             for attr in ex_cont.keys():
                 if not (ex_cont[attr] == -1 or ex_cont[attr] == 'None'):
