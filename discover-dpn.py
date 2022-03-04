@@ -9,10 +9,15 @@ from pm4py.objects.petri_net.importer import importer as pnml_importer
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.objects.log.importer.xes import importer as xes_importer
 
-def get_place_from_transition(net, transition):
+def get_place_from_transition(net, transition, not_silent_dict):
+    # THE METHOD HAS PROBLEMS IN CASE OF A DECISION POINT WHICH HAS ONLY INVISIBLE ACTIVITIES AS OUT ARCS: IN THAT CASE IT WILL NOT BE PROCESSED - DA CAMBIARE
     places = list()
     for place in net.places:
         for arc in place.out_arcs:
+            if arc.target.label is None:
+                if len(not_silent_dict[arc.target.name]["labels"]) > 0:
+                    if transition in not_silent_dict[arc.target.name]["label"]:
+                        places.append(place)
             if arc.target.label == transition:
                 places.append(place)
     return places
@@ -32,25 +37,44 @@ def get_next_not_silent(place, not_silent):
         return not_silent
     out_arcs_label = [arc.target.label for arc in place.out_arcs]
     if not None in out_arcs_label:
-        return not_silent.extend(out_arcs_label)
+        not_silent.extend(out_arcs_label)
+        return not_silent
     for out_arc in place.out_arcs:
         if not out_arc.target.label is None:
-            not_silent.append(out_arc.target.label)
+            not_silent.extend(out_arc.target.label)
         else:
             for out_arc_inn in out_arc.target.out_arcs:
-                get_next_not_silent(out_arc_inn.target, not_silent)
+                not_silent = get_next_not_silent(out_arc_inn.target, not_silent)
+    return not_silent
+
+def get_previous_not_silent(place, not_silent):
+    breakpoint()
+    in_arcs_label = [arc.source.label for arc in place.in_arcs]
+    if not None in in_arcs_label:
+        not_silent.extend(in_arcs_label)
+        return not_silent
+    for in_arc in place.in_arcs:
+        if not in_arc.source.label is None:
+            not_silent.extend(in_arc.source.label)
+        else:
+            for in_arc_inn in in_arc.target.out_arcs:
+                not_silent = get_previous_not_silent(in_arc_inn.source, not_silent)
     return not_silent
 
 def get_silent_activities_map(net):
     breakpoint()
-    not_silent = dict()
+    not_silent_dict = dict()
     for transition in net.transitions:
         if transition.label is None:
-            not_silent_trans = list()
             for out_place in transition.out_arcs:
-                not_silent_trans = get_next_not_silent(out_place, not_silent_trans)
-            not_silent[transitions.name] = not_silent_trans
-    return not_silent
+                not_silent_trans = get_next_not_silent(out_place.target, [])
+            not_silent_dict[transition.name] = {"labels": not_silent_trans}
+            for in_place in transition.in_arcs:
+                not_silent_trans = get_previous_not_silent(in_place.source, [])
+            not_silent_trans = list(dict.fromkeys(not_silent_trans))
+            not_silent_dict[transition.name]["attributes"] = not_silent_trans
+    return not_silent_dict
+
 # Argument (verbose and net_name)
 parser = argparse.ArgumentParser()
 parser.add_argument("net_name", help="name of the petri net file (without extension)", type=str)
