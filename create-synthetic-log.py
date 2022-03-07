@@ -57,6 +57,12 @@ def get_ex_cont(model_name):
         status = choice(["approved", "rejected"])
         policy_type = choice(["normal", "premium"])
         ex_cont = {"amount": a[0], "policyType": policy_type, "status": status}
+    elif model_name == 'running-example-Will-BPM-silent':
+        a = np.random.uniform(0, 1000, 1)
+        status = choice(["approved", "rejected"])
+        policy_type = choice(["normal", "premium"])
+        communication = choice(["email", "letter"])
+        ex_cont = {"amount": a[0], "policyType": policy_type, "status": status, "communication": communication}
     else:
         raise Exception("Model name not implemented.")
     
@@ -97,7 +103,8 @@ for i in tqdm(range(NO_TRACES)):
             ex_cont = dict()
         dm = dpn_semantics.execute(trans, net, dm, ex_cont_total)
         #breakpoint()
-        visited_elements.append(tuple([trans, ex_cont]))
+        if not trans.label is None:
+            visited_elements.append(tuple([trans, ex_cont]))
 
     if dm == final_marking:
         verboseprint("Final marking reached!")
@@ -109,8 +116,10 @@ for i in tqdm(range(NO_TRACES)):
     verboseprint("Visited activities: {}".format(visited_elements))
     all_visited.append(tuple(visited_elements))
 
+#breakpoint()
 log = log_instance.EventLog()
 for index, element_sequence in tqdm(enumerate(all_visited)):
+    #breakpoint()
     trace = log_instance.Trace()
     trace.attributes[case_id_key] = str(index)
     #breakpoint()
@@ -128,5 +137,5 @@ for index, element_sequence in tqdm(enumerate(all_visited)):
             # increase 5 minutes
             curr_timestamp = curr_timestamp + datetime.timedelta(minutes=5)
     log.append(trace)
-
+#breakpoint()
 xes_exporter.apply(log, 'log-{}.xes'.format(net_name))

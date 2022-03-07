@@ -9,17 +9,47 @@ from pm4py.objects.petri_net.importer import importer as pnml_importer
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.objects.log.importer.xes import importer as xes_importer
 
-def get_place_from_transition(net, transition, not_silent_dict):
-    # THE METHOD HAS PROBLEMS IN CASE OF A DECISION POINT WHICH HAS ONLY INVISIBLE ACTIVITIES AS OUT ARCS: IN THAT CASE IT WILL NOT BE PROCESSED - DA CAMBIARE
-    places = list()
+def get_map_place_to_events(net):
+    #breakpoint()
+    places = dict()
     for place in net.places:
-        for arc in place.out_arcs:
-            if arc.target.label is None:
-                if len(not_silent_dict[arc.target.name]["labels"]) > 0:
-                    if transition in not_silent_dict[arc.target.name]["label"]:
-                        places.append(place)
-            if arc.target.label == transition:
-                places.append(place)
+        if len(place.out_arcs) >= 2:
+            #breakpoint()
+            # dictionary containing for every decision point target categories 
+            places[place.name] = dict()
+            # loop for out arcs
+            for arc in place.out_arcs:
+                if not arc.target.label is None:
+                    places[place.name][arc.target.name] = arc.target.label
+                else:
+                    silent_out_arcs = arc.target.out_arcs
+                    next_not_silent = []
+                    for silent_out_arc in silent_out_arcs:
+                        next_place_silent = silent_out_arc.target
+                        next_not_silent = get_next_not_silent(next_place_silent, next_not_silent)
+                    places[place.name][arc.target.name] = next_not_silent
+    return places
+
+#def get_place_from_transition(net, transition, not_silent_dict):
+#    # THE METHOD HAS PROBLEMS IN CASE OF A DECISION POINT WHICH HAS ONLY INVISIBLE ACTIVITIES AS OUT ARCS:
+#    # IN THAT CASE IT WILL NOT BE PROCESSED - DA CAMBIARE
+#    places = list()
+#    for place in net.places:
+#        for arc in place.out_arcs:
+#            if arc.target.label is None:
+#                if len(not_silent_dict[arc.target.name]["labels"]) > 0:
+#                    if transition in not_silent_dict[arc.target.name]["label"]:
+#                        places.append(place)
+#            if arc.target.label == transition:
+#                places.append(place)
+#    return places
+def get_place_from_transition(places_map, transition):
+    #breakpoint()
+    places = list() 
+    for place in places_map.keys():
+        for trans in places_map[place].keys():
+            if transition in places_map[place][trans]:
+                places.append((place, trans))
     return places
 
 def get_attributes_from_event(event):
@@ -62,7 +92,7 @@ def get_previous_not_silent(place, not_silent):
     return not_silent
 
 def get_silent_activities_map(net):
-    breakpoint()
+    #breakpoint()
     not_silent_dict = dict()
     for transition in net.transitions:
         if transition.label is None:
@@ -89,6 +119,7 @@ try:
 except:
     raise Exception("File not found")
 log = xes_importer.apply('log-{}.xes'.format(net_name))
+#breakpoint()
 for trace in log:
     for event in trace:
         #if "A" in event.keys():
@@ -147,38 +178,56 @@ def get_feature_names(dataset):
 #gviz = pn_visualizer.apply(dpnet, im, fm)
 #pn_visualizer.view(gviz)
 
+# get the map of place and events
+places_events_map = get_map_place_to_events(net)
+#breakpoint()
 # get a dict of data for every decision point
 decision_points_data = dict()
 for place in net.places:
+    #breakpoint()
     if len(place.out_arcs) >= 2:
         decision_points_data[place.name] = pd.DataFrame()
 
 # fill the data
 last_k_events = list()
 for trace in log:
+    #breakpoint()
     for event in trace:
-        places_from_event = get_place_from_transition(net, event['concept:name'])  
+        #breakpoint()
+        #print(event)
+        places_from_event = get_place_from_transition(places_events_map, event['concept:name'])  
         if len(places_from_event) == 0:
-            raise Exception("Transition not found")
+            last_k_events.append(event)
+            if len(last_k_events) > k:
+                last_k_events = last_k_events[-k:]
+            #print(event)
+            #raise Exception("Transition not found")
+            continue
         for place_from_event in places_from_event:
-            if place_from_event.name in decision_points_data.keys():
-                last_k_event_dict = dict()
-                for last_event in last_k_events:
-                    for attr in last_event:
-                        event_attr = get_attributes_from_event(last_event)
-                        event_attr.pop('time:timestamp')
-                        event_attr.pop("concept:name")
-                        last_k_event_dict.update(event_attr)
-                old_df = copy.copy(decision_points_data[place_from_event.name])
-                new_row = pd.DataFrame.from_dict(last_k_event_dict)
-                new_row = pd.get_dummies(new_row)
-                #breakpoint()
-                new_row["target"] = event["concept:name"]
-                decision_points_data[place_from_event.name] = pd.concat([old_df, new_row], ignore_index=True)
+            #print(event)
+            #if place_from_event.name in decision_points_data.keys():
+            #breakpoint()
+            last_k_event_dict = dict()
+            for last_event in last_k_events:
+                #for attr in last_event:
+                event_attr = get_attributes_from_event(last_event)
+                event_attr.pop('time:timestamp')
+                event_attr.pop("concept:name")
+                last_k_event_dict.update(event_attr)
+            #breakpoint()
+            old_df = copy.copy(decision_points_data[place_from_event[0]])
+            new_row = pd.DataFrame.from_dict(last_k_event_dict)
+            new_row = pd.get_dummies(new_row)
+            new_row["target"] = place_from_event[1]
+            #breakpoint()
+            decision_points_data[place_from_event[0]] = pd.concat([old_df, new_row], ignore_index=True)
         last_k_events.append(event)
         if len(last_k_events) > k:
             last_k_events = last_k_events[-k:]
+        #if len(last_k_events) > k:
+        #    last_k_events = last_k_events[-k:]
 # 
+#breakpoint()
 for decision_point in decision_points_data.keys():
     #breakpoint()
     print("")
@@ -192,6 +241,9 @@ for decision_point in decision_points_data.keys():
         X.fillna(value={"A": -1, "cat_cat_1": 0, "cat_cat_2": 0}, inplace=True)
     elif net_name == 'running-example-Will-BPM':
         X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, "status_rejected": 0}, inplace=True)
+    elif net_name == 'running-example-Will-BPM-silent':
+        X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, 
+            "status_rejected": 0, "communication_email": 0, "communication_letter": 0}, inplace=True)
 #    X["A"].fillna(-1, inplace=True)
 #    X[["cat_cat_1", "cat_cat_2"]].fillna(0, inplace=True)
     y = copy.copy(dataset)['target']
@@ -203,5 +255,10 @@ for decision_point in decision_points_data.keys():
     rule_extr = extract_rules(dt, feature_names)
     #breakpoint()
     for label_class in rule_extr.keys():
-        print(label_class)
+        event_name = places_events_map[decision_point]
+        if not isinstance(event_name[label_class], list):
+            event_name = event_name[label_class]
+        else:
+            event_name = label_class
+        print(event_name)
         print(rule_extr[label_class])
