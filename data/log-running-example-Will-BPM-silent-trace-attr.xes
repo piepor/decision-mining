@@ -1,0 +1,3128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<log xes.version="1849-2016" xes.features="nested-attributes" xmlns="http://www.xes-standard.org/">
+	<trace>
+		<string key="concept:name" value="0" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T17:37:46.818641" />
+			<string key="amount" value="228.5250466736347" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-08T17:42:46.818641" />
+			<string key="amount" value="228.5250466736347" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T17:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-08T17:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-08T17:57:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T18:02:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="1" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T18:07:46.818641" />
+			<string key="amount" value="985.7525122644039" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-08T18:12:46.818641" />
+			<string key="amount" value="985.7525122644039" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T18:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-08T18:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-08T18:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T18:32:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="2" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T18:37:46.818641" />
+			<string key="amount" value="235.72727394251814" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-08T18:42:46.818641" />
+			<string key="amount" value="235.72727394251814" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T18:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-08T18:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T18:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="3" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T19:02:46.818641" />
+			<string key="amount" value="174.32971391161433" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-08T19:07:46.818641" />
+			<string key="amount" value="174.32971391161433" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T19:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-08T19:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-08T19:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T19:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="4" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T19:32:46.818641" />
+			<string key="amount" value="195.96489685573425" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-08T19:37:46.818641" />
+			<string key="amount" value="195.96489685573425" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T19:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-08T19:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-08T19:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T19:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="5" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T20:02:46.818641" />
+			<string key="amount" value="891.8805900058865" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-08T20:07:46.818641" />
+			<string key="amount" value="891.8805900058865" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T20:12:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-08T20:17:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T20:22:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="6" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T20:27:46.818641" />
+			<string key="amount" value="454.95423620657294" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-08T20:32:46.818641" />
+			<string key="amount" value="454.95423620657294" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T20:37:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-08T20:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-08T20:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T20:52:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="7" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T20:57:46.818641" />
+			<string key="amount" value="139.9951673418036" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-08T21:02:46.818641" />
+			<string key="amount" value="139.9951673418036" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T21:07:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-08T21:12:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T21:17:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="8" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T21:22:46.818641" />
+			<string key="amount" value="504.8780346548093" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-08T21:27:46.818641" />
+			<string key="amount" value="504.8780346548093" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T21:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-08T21:37:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-08T21:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T21:47:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="9" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T21:52:46.818641" />
+			<string key="amount" value="583.954922283427" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-08T21:57:46.818641" />
+			<string key="amount" value="583.954922283427" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T22:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-08T22:07:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T22:12:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="10" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T22:17:46.818641" />
+			<string key="amount" value="522.6570627307873" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-08T22:22:46.818641" />
+			<string key="amount" value="522.6570627307873" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T22:27:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-08T22:32:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T22:37:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="11" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T22:42:46.818641" />
+			<string key="amount" value="186.53700740839852" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-08T22:47:46.818641" />
+			<string key="amount" value="186.53700740839852" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T22:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-08T22:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T23:02:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="12" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T23:07:46.818641" />
+			<string key="amount" value="900.2323692713961" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-08T23:12:46.818641" />
+			<string key="amount" value="900.2323692713961" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T23:17:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-08T23:22:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T23:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="13" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T23:32:46.818641" />
+			<string key="amount" value="906.093639501043" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-08T23:37:46.818641" />
+			<string key="amount" value="906.093639501043" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-08T23:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-08T23:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-08T23:52:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="14" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-08T23:57:46.818641" />
+			<string key="amount" value="339.30034613165225" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T00:02:46.818641" />
+			<string key="amount" value="339.30034613165225" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T00:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T00:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T00:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T00:22:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="15" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T00:27:46.818641" />
+			<string key="amount" value="654.5440254374028" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T00:32:46.818641" />
+			<string key="amount" value="654.5440254374028" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T00:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T00:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T00:47:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="16" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T00:52:46.818641" />
+			<string key="amount" value="255.31976368904773" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T00:57:46.818641" />
+			<string key="amount" value="255.31976368904773" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T01:02:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T01:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T01:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T01:17:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="17" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T01:22:46.818641" />
+			<string key="amount" value="112.51273597614764" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T01:27:46.818641" />
+			<string key="amount" value="112.51273597614764" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T01:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T01:37:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T01:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T01:47:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="18" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T01:52:46.818641" />
+			<string key="amount" value="626.2926662843655" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T01:57:46.818641" />
+			<string key="amount" value="626.2926662843655" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T02:02:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T02:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T02:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T02:17:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="19" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T02:22:46.818641" />
+			<string key="amount" value="226.4726169665223" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T02:27:46.818641" />
+			<string key="amount" value="226.4726169665223" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T02:32:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T02:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T02:42:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="20" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T02:47:46.818641" />
+			<string key="amount" value="282.2755222200455" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T02:52:46.818641" />
+			<string key="amount" value="282.2755222200455" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T02:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T03:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T03:07:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="21" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T03:12:46.818641" />
+			<string key="amount" value="721.2318087999188" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T03:17:46.818641" />
+			<string key="amount" value="721.2318087999188" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T03:22:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T03:27:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T03:32:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="22" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T03:37:46.818641" />
+			<string key="amount" value="467.29748375036706" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T03:42:46.818641" />
+			<string key="amount" value="467.29748375036706" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T03:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T03:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T03:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="23" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T04:02:46.818641" />
+			<string key="amount" value="647.5716014839373" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T04:07:46.818641" />
+			<string key="amount" value="647.5716014839373" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T04:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T04:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T04:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T04:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="24" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T04:32:46.818641" />
+			<string key="amount" value="814.6104296191903" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T04:37:46.818641" />
+			<string key="amount" value="814.6104296191903" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T04:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T04:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T04:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T04:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="25" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T05:02:46.818641" />
+			<string key="amount" value="511.4148787211824" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T05:07:46.818641" />
+			<string key="amount" value="511.4148787211824" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T05:12:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T05:17:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T05:22:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="26" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T05:27:46.818641" />
+			<string key="amount" value="834.5287419983819" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T05:32:46.818641" />
+			<string key="amount" value="834.5287419983819" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T05:37:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T05:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T05:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T05:52:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="27" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T05:57:46.818641" />
+			<string key="amount" value="421.90495865326403" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T06:02:46.818641" />
+			<string key="amount" value="421.90495865326403" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T06:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T06:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T06:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T06:22:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="28" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T06:27:46.818641" />
+			<string key="amount" value="857.238326255616" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T06:32:46.818641" />
+			<string key="amount" value="857.238326255616" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T06:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T06:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T06:47:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="29" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T06:52:46.818641" />
+			<string key="amount" value="436.31157512679187" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T06:57:46.818641" />
+			<string key="amount" value="436.31157512679187" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T07:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T07:07:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T07:12:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="30" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T07:17:46.818641" />
+			<string key="amount" value="204.35158558402844" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T07:22:46.818641" />
+			<string key="amount" value="204.35158558402844" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T07:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T07:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T07:37:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T07:42:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="31" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T07:47:46.818641" />
+			<string key="amount" value="143.8822598977849" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T07:52:46.818641" />
+			<string key="amount" value="143.8822598977849" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T07:57:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T08:02:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T08:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T08:12:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="32" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T08:17:46.818641" />
+			<string key="amount" value="324.60639834665704" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T08:22:46.818641" />
+			<string key="amount" value="324.60639834665704" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T08:27:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T08:32:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T08:37:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="33" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T08:42:46.818641" />
+			<string key="amount" value="145.85012050068968" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T08:47:46.818641" />
+			<string key="amount" value="145.85012050068968" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T08:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T08:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T09:02:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="34" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T09:07:46.818641" />
+			<string key="amount" value="735.3236269337112" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T09:12:46.818641" />
+			<string key="amount" value="735.3236269337112" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T09:17:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T09:22:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T09:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="35" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T09:32:46.818641" />
+			<string key="amount" value="297.4169120756257" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T09:37:46.818641" />
+			<string key="amount" value="297.4169120756257" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T09:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T09:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T09:52:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="36" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T09:57:46.818641" />
+			<string key="amount" value="487.1699145423275" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T10:02:46.818641" />
+			<string key="amount" value="487.1699145423275" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T10:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T10:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T10:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T10:22:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="37" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T10:27:46.818641" />
+			<string key="amount" value="883.7752733012883" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T10:32:46.818641" />
+			<string key="amount" value="883.7752733012883" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T10:37:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T10:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T10:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T10:52:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="38" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T10:57:46.818641" />
+			<string key="amount" value="208.00286974202064" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T11:02:46.818641" />
+			<string key="amount" value="208.00286974202064" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T11:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T11:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T11:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T11:22:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="39" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T11:27:46.818641" />
+			<string key="amount" value="919.7046435453896" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T11:32:46.818641" />
+			<string key="amount" value="919.7046435453896" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T11:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T11:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T11:47:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="40" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T11:52:46.818641" />
+			<string key="amount" value="725.962756860513" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T11:57:46.818641" />
+			<string key="amount" value="725.962756860513" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T12:02:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T12:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T12:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T12:17:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="41" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T12:22:46.818641" />
+			<string key="amount" value="845.5840508449888" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T12:27:46.818641" />
+			<string key="amount" value="845.5840508449888" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T12:32:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T12:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T12:42:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="42" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T12:47:46.818641" />
+			<string key="amount" value="162.00661974306706" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T12:52:46.818641" />
+			<string key="amount" value="162.00661974306706" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T12:57:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T13:02:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T13:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T13:12:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="43" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T13:17:46.818641" />
+			<string key="amount" value="18.000954687573902" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T13:22:46.818641" />
+			<string key="amount" value="18.000954687573902" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T13:27:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T13:32:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T13:37:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="44" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T13:42:46.818641" />
+			<string key="amount" value="477.27566721685554" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T13:47:46.818641" />
+			<string key="amount" value="477.27566721685554" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T13:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T13:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T14:02:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="45" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T14:07:46.818641" />
+			<string key="amount" value="913.2536693672413" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T14:12:46.818641" />
+			<string key="amount" value="913.2536693672413" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T14:17:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T14:22:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T14:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="46" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T14:32:46.818641" />
+			<string key="amount" value="855.3690099788757" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T14:37:46.818641" />
+			<string key="amount" value="855.3690099788757" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T14:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T14:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T14:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T14:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="47" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T15:02:46.818641" />
+			<string key="amount" value="300.9027695711464" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T15:07:46.818641" />
+			<string key="amount" value="300.9027695711464" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T15:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T15:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T15:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T15:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="48" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T15:32:46.818641" />
+			<string key="amount" value="98.34916315714182" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T15:37:46.818641" />
+			<string key="amount" value="98.34916315714182" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T15:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T15:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T15:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T15:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="49" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T16:02:46.818641" />
+			<string key="amount" value="695.3971894520535" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T16:07:46.818641" />
+			<string key="amount" value="695.3971894520535" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T16:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T16:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T16:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T16:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="50" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T16:32:46.818641" />
+			<string key="amount" value="324.5109875004061" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T16:37:46.818641" />
+			<string key="amount" value="324.5109875004061" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T16:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T16:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T16:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T16:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="51" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T17:02:46.818641" />
+			<string key="amount" value="953.332447344717" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T17:07:46.818641" />
+			<string key="amount" value="953.332447344717" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T17:12:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T17:17:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T17:22:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="52" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T17:27:46.818641" />
+			<string key="amount" value="460.4697134104655" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T17:32:46.818641" />
+			<string key="amount" value="460.4697134104655" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T17:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T17:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T17:47:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="53" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T17:52:46.818641" />
+			<string key="amount" value="881.9943602534669" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T17:57:46.818641" />
+			<string key="amount" value="881.9943602534669" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T18:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T18:07:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T18:12:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="54" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T18:17:46.818641" />
+			<string key="amount" value="573.2689971999819" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T18:22:46.818641" />
+			<string key="amount" value="573.2689971999819" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T18:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T18:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T18:37:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T18:42:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="55" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T18:47:46.818641" />
+			<string key="amount" value="575.4440179927565" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T18:52:46.818641" />
+			<string key="amount" value="575.4440179927565" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T18:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-09T19:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T19:07:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="56" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T19:12:46.818641" />
+			<string key="amount" value="949.3616553180796" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T19:17:46.818641" />
+			<string key="amount" value="949.3616553180796" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T19:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T19:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T19:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T19:37:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="57" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T19:42:46.818641" />
+			<string key="amount" value="456.0912770278327" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T19:47:46.818641" />
+			<string key="amount" value="456.0912770278327" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T19:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T19:57:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T20:02:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T20:07:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="58" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T20:12:46.818641" />
+			<string key="amount" value="771.8061984373658" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T20:17:46.818641" />
+			<string key="amount" value="771.8061984373658" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T20:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T20:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T20:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T20:37:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="59" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T20:42:46.818641" />
+			<string key="amount" value="485.0565271985339" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T20:47:46.818641" />
+			<string key="amount" value="485.0565271985339" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T20:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T20:57:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T21:02:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T21:07:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="60" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T21:12:46.818641" />
+			<string key="amount" value="374.23578987349214" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T21:17:46.818641" />
+			<string key="amount" value="374.23578987349214" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T21:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T21:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T21:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T21:37:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="61" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T21:42:46.818641" />
+			<string key="amount" value="803.8634902596646" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T21:47:46.818641" />
+			<string key="amount" value="803.8634902596646" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T21:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T21:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T22:02:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="62" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T22:07:46.818641" />
+			<string key="amount" value="244.43623549557236" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T22:12:46.818641" />
+			<string key="amount" value="244.43623549557236" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T22:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-09T22:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T22:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T22:32:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="63" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T22:37:46.818641" />
+			<string key="amount" value="5.033521912721883" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T22:42:46.818641" />
+			<string key="amount" value="5.033521912721883" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T22:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-09T22:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-09T22:57:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T23:02:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="64" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T23:07:46.818641" />
+			<string key="amount" value="978.383520900613" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-09T23:12:46.818641" />
+			<string key="amount" value="978.383520900613" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T23:17:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T23:22:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T23:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="65" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T23:32:46.818641" />
+			<string key="amount" value="299.31688837371627" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-09T23:37:46.818641" />
+			<string key="amount" value="299.31688837371627" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-09T23:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-09T23:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-09T23:52:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="66" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-09T23:57:46.818641" />
+			<string key="amount" value="929.2182254509796" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T00:02:46.818641" />
+			<string key="amount" value="929.2182254509796" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T00:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T00:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-10T00:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T00:22:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="67" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T00:27:46.818641" />
+			<string key="amount" value="204.0026262402066" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T00:32:46.818641" />
+			<string key="amount" value="204.0026262402066" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T00:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-10T00:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T00:47:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="68" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T00:52:46.818641" />
+			<string key="amount" value="919.0850566115718" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T00:57:46.818641" />
+			<string key="amount" value="919.0850566115718" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T01:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T01:07:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T01:12:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="69" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T01:17:46.818641" />
+			<string key="amount" value="928.845700172707" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T01:22:46.818641" />
+			<string key="amount" value="928.845700172707" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T01:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T01:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-10T01:37:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T01:42:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="70" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T01:47:46.818641" />
+			<string key="amount" value="593.564566638526" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T01:52:46.818641" />
+			<string key="amount" value="593.564566638526" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T01:57:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T02:02:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-10T02:07:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T02:12:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="71" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T02:17:46.818641" />
+			<string key="amount" value="543.8513375085281" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T02:22:46.818641" />
+			<string key="amount" value="543.8513375085281" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T02:27:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-10T02:32:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T02:37:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="72" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T02:42:46.818641" />
+			<string key="amount" value="688.0381942658597" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T02:47:46.818641" />
+			<string key="amount" value="688.0381942658597" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T02:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-10T02:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T03:02:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="73" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T03:07:46.818641" />
+			<string key="amount" value="795.4190354420435" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T03:12:46.818641" />
+			<string key="amount" value="795.4190354420435" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T03:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T03:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-10T03:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T03:32:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="74" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T03:37:46.818641" />
+			<string key="amount" value="797.950636993296" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T03:42:46.818641" />
+			<string key="amount" value="797.950636993296" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T03:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T03:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T03:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="75" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T04:02:46.818641" />
+			<string key="amount" value="643.1697998427542" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T04:07:46.818641" />
+			<string key="amount" value="643.1697998427542" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T04:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T04:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-10T04:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T04:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="76" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T04:32:46.818641" />
+			<string key="amount" value="838.0536329588555" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T04:37:46.818641" />
+			<string key="amount" value="838.0536329588555" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T04:42:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-10T04:47:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T04:52:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T04:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="77" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T05:02:46.818641" />
+			<string key="amount" value="236.23450437537574" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T05:07:46.818641" />
+			<string key="amount" value="236.23450437537574" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T05:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-10T05:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T05:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T05:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="78" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T05:32:46.818641" />
+			<string key="amount" value="342.379308495825" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T05:37:46.818641" />
+			<string key="amount" value="342.379308495825" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T05:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T05:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T05:52:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="79" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T05:57:46.818641" />
+			<string key="amount" value="70.44176381570256" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T06:02:46.818641" />
+			<string key="amount" value="70.44176381570256" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T06:07:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T06:12:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T06:17:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="80" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T06:22:46.818641" />
+			<string key="amount" value="920.9412012596794" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T06:27:46.818641" />
+			<string key="amount" value="920.9412012596794" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T06:32:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T06:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T06:42:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="81" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T06:47:46.818641" />
+			<string key="amount" value="164.1407386788457" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T06:52:46.818641" />
+			<string key="amount" value="164.1407386788457" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T06:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T07:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T07:07:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="82" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T07:12:46.818641" />
+			<string key="amount" value="182.1102010318594" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T07:17:46.818641" />
+			<string key="amount" value="182.1102010318594" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T07:22:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T07:27:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T07:32:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="83" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T07:37:46.818641" />
+			<string key="amount" value="229.0339073014416" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T07:42:46.818641" />
+			<string key="amount" value="229.0339073014416" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T07:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T07:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T07:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="84" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T08:02:46.818641" />
+			<string key="amount" value="608.4426191096858" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T08:07:46.818641" />
+			<string key="amount" value="608.4426191096858" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T08:12:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-10T08:17:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T08:22:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="85" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T08:27:46.818641" />
+			<string key="amount" value="264.6974489481482" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T08:32:46.818641" />
+			<string key="amount" value="264.6974489481482" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T08:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-10T08:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T08:47:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="86" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T08:52:46.818641" />
+			<string key="amount" value="900.4841281656111" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T08:57:46.818641" />
+			<string key="amount" value="900.4841281656111" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T09:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-10T09:07:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T09:12:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="87" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T09:17:46.818641" />
+			<string key="amount" value="672.5850245071186" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T09:22:46.818641" />
+			<string key="amount" value="672.5850245071186" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T09:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T09:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-10T09:37:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T09:42:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="88" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T09:47:46.818641" />
+			<string key="amount" value="200.29392269807155" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T09:52:46.818641" />
+			<string key="amount" value="200.29392269807155" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T09:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-10T10:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T10:07:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="89" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T10:12:46.818641" />
+			<string key="amount" value="182.87195413360914" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T10:17:46.818641" />
+			<string key="amount" value="182.87195413360914" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T10:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T10:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval email" />
+			<date key="time:timestamp" value="2022-03-10T10:32:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T10:37:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="90" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T10:42:46.818641" />
+			<string key="amount" value="76.84816812006845" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T10:47:46.818641" />
+			<string key="amount" value="76.84816812006845" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T10:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T10:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T11:02:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="91" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T11:07:46.818641" />
+			<string key="amount" value="349.42313027205483" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T11:12:46.818641" />
+			<string key="amount" value="349.42313027205483" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T11:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T11:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-10T11:27:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T11:32:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="92" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T11:37:46.818641" />
+			<string key="amount" value="880.325383220389" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T11:42:46.818641" />
+			<string key="amount" value="880.325383220389" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T11:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T11:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T11:57:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="93" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T12:02:46.818641" />
+			<string key="amount" value="878.8583164840743" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T12:07:46.818641" />
+			<string key="amount" value="878.8583164840743" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T12:12:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send approval letter" />
+			<date key="time:timestamp" value="2022-03-10T12:17:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Issue Payment" />
+			<date key="time:timestamp" value="2022-03-10T12:22:46.818641" />
+			<string key="status" value="approved" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T12:27:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="94" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T12:32:46.818641" />
+			<string key="amount" value="905.6759368386637" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T12:37:46.818641" />
+			<string key="amount" value="905.6759368386637" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T12:42:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-10T12:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T12:52:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="95" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T12:57:46.818641" />
+			<string key="amount" value="742.6617846389709" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T13:02:46.818641" />
+			<string key="amount" value="742.6617846389709" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T13:07:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T13:12:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T13:17:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="96" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T13:22:46.818641" />
+			<string key="amount" value="68.95912979457263" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T13:27:46.818641" />
+			<string key="amount" value="68.95912979457263" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T13:32:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T13:37:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T13:42:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="97" />
+		<string key="policyType" value="normal" />
+		<string key="communication" value="email" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T13:47:46.818641" />
+			<string key="amount" value="519.7670923512253" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check all" />
+			<date key="time:timestamp" value="2022-03-10T13:52:46.818641" />
+			<string key="amount" value="519.7670923512253" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T13:57:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection email" />
+			<date key="time:timestamp" value="2022-03-10T14:02:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T14:07:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="98" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T14:12:46.818641" />
+			<string key="amount" value="95.43646228518399" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T14:17:46.818641" />
+			<string key="amount" value="95.43646228518399" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T14:22:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T14:27:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T14:32:46.818641" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="99" />
+		<string key="policyType" value="premium" />
+		<string key="communication" value="letter" />
+		<event>
+			<string key="concept:name" value="Register claim" />
+			<date key="time:timestamp" value="2022-03-10T14:37:46.818641" />
+			<string key="amount" value="534.531930108088" />
+		</event>
+		<event>
+			<string key="concept:name" value="Check payment only" />
+			<date key="time:timestamp" value="2022-03-10T14:42:46.818641" />
+			<string key="amount" value="534.531930108088" />
+		</event>
+		<event>
+			<string key="concept:name" value="Evaluate Claim" />
+			<date key="time:timestamp" value="2022-03-10T14:47:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Send rejection letter" />
+			<date key="time:timestamp" value="2022-03-10T14:52:46.818641" />
+			<string key="status" value="rejected" />
+		</event>
+		<event>
+			<string key="concept:name" value="Archive" />
+			<date key="time:timestamp" value="2022-03-10T14:57:46.818641" />
+		</event>
+	</trace>
+</log>

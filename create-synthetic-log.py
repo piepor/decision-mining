@@ -27,7 +27,7 @@ verbose = args.verbose
 net_name = args.net_name
 verboseprint = print if verbose else lambda *args, **kwargs: None
 try:
-    net, initial_marking, final_marking = pnml_importer.apply("{}.pnml".format(net_name))
+    net, initial_marking, final_marking = pnml_importer.apply("models/{}.pnml".format(net_name))
 except:
     raise Exception("File not found")
 
@@ -57,7 +57,7 @@ def get_ex_cont(model_name):
         status = choice(["approved", "rejected"])
         policy_type = choice(["normal", "premium"])
         ex_cont = {"amount": a[0], "policyType": policy_type, "status": status}
-    elif model_name == 'running-example-Will-BPM-silent':
+    elif model_name == 'running-example-Will-BPM-silent' or model_name == 'running-example-Will-BPM-silent-trace-attr':
         a = np.random.uniform(0, 1000, 1)
         status = choice(["approved", "rejected"])
         policy_type = choice(["normal", "premium"])
@@ -124,6 +124,11 @@ for index, element_sequence in tqdm(enumerate(all_visited)):
     trace.attributes[case_id_key] = str(index)
     #breakpoint()
     for element in element_sequence:
+        if 'trace-attr' in net_name:
+            if "policyType" in element[1].keys():
+                trace.attributes["policyType"] = element[1]["policyType"]
+            if "communication" in element[1].keys():
+                trace.attributes["communication"] = element[1]["communication"]
         event_el = element[0]
         ex_cont = element[1]
         if type(event_el) is PetriNet.Transition:
@@ -131,11 +136,11 @@ for index, element_sequence in tqdm(enumerate(all_visited)):
             event[activity_key] = event_el.label
             event[timestamp_key] = curr_timestamp
             for attr in ex_cont.keys():
-                if not (ex_cont[attr] == -1 or ex_cont[attr] == 'None'):
+                if not (ex_cont[attr] == -1 or ex_cont[attr] == 'None') and not(attr == "communication" or attr == "policyType"):
                     event[attr] = copy.copy(ex_cont[attr])
             trace.append(event)
             # increase 5 minutes
             curr_timestamp = curr_timestamp + datetime.timedelta(minutes=5)
     log.append(trace)
 #breakpoint()
-xes_exporter.apply(log, 'log-{}.xes'.format(net_name))
+xes_exporter.apply(log, 'data/log-{}.xes'.format(net_name))
