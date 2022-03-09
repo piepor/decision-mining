@@ -184,10 +184,7 @@ for decision_point in decision_points_data.keys():
         X.fillna(value={"A": -1, "cat_cat_1": 0, "cat_cat_2": 0}, inplace=True)
     elif net_name == 'running-example-Will-BPM':
         X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, "status_rejected": 0}, inplace=True)
-    elif net_name == 'running-example-Will-BPM-silent':
-        X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, 
-            "status_rejected": 0, "communication_email": 0, "communication_letter": 0}, inplace=True)
-    elif net_name == 'running-example-Will-BPM-silent-trace-attr':
+    elif net_name == 'running-example-Will-BPM-silent' or net_name == 'running-example-Will-BPM-silent-trace-attr':
         X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, 
             "status_rejected": 0, "communication_email": 0, "communication_letter": 0}, inplace=True)
     y = copy.copy(dataset)['target']
