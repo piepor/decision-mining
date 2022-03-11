@@ -63,6 +63,14 @@ def get_ex_cont(model_name):
         policy_type = choice(["normal", "premium"])
         communication = choice(["email", "letter"])
         ex_cont = {"amount": a[0], "policyType": policy_type, "status": status, "communication": communication}
+    elif model_name == 'running-example-Will-BPM-silent-loops' or model_name == 'running-example-Will-BPM-silent-loops-silent':
+        a = np.random.uniform(0, 1000, 1)
+        status = choice(["approved", "rejected"])
+        policy_type = choice(["normal", "premium"])
+        communication = choice(["email", "letter"])
+        appeal = choice([True, False])
+        ex_cont = {"amount": a[0], "policyType": policy_type, "status": status,
+                "communication": communication, "appeal": appeal}
     else:
         raise Exception("Model name not implemented.")
     
@@ -87,24 +95,32 @@ for i in tqdm(range(NO_TRACES)):
     all_enabled_trans = [0]
     # execution context
     ex_cont_total = get_ex_cont(net_name)
+    if "loops" in net_name:
+        ex_cont_total["appeal"] = choice([True, False])
     #breakpoint()
     while dm != final_marking and len(visited_elements) < max_trace_length and len(all_enabled_trans) > 0:
+        verboseprint(dm)
         all_enabled_trans = dpn_semantics.enabled_transitions(net, dm, ex_cont_total)
         for enabled in list(all_enabled_trans):
             if "guard" in enabled.properties:
-                if not dpn_semantics.evaluate_guard(enabled.properties["guard"], enabled.properties["readVariable"], dm.data_dict):
+                if not dpn_semantics.evaluate_guard(enabled.properties["guard"], enabled.properties["readVariable"], ex_cont_total):
                     all_enabled_trans.discard(enabled)
-        #breakpoint()
+        if len(all_enabled_trans) == 0:
+            breakpoint()
         trans = choice(list(all_enabled_trans))
         if "readVariable" in trans.properties:
             for read_var in trans.properties["readVariable"]:
                 ex_cont[read_var] = ex_cont_total[read_var]
         else:
             ex_cont = dict()
-        dm = dpn_semantics.execute(trans, net, dm, ex_cont_total)
+        #dm = dpn_semantics.execute(trans, net, dm, ex_cont_total)
+        dm = dpn_semantics.execute(trans, net, dm, ex_cont)
         #breakpoint()
         if not trans.label is None:
             visited_elements.append(tuple([trans, ex_cont]))
+        if 'loops' in net_name:
+            if trans.name in ["trans_R"]:
+                ex_cont_total["appeal"] = False
 
     if dm == final_marking:
         verboseprint("Final marking reached!")
@@ -136,7 +152,7 @@ for index, element_sequence in tqdm(enumerate(all_visited)):
             event[activity_key] = event_el.label
             event[timestamp_key] = curr_timestamp
             for attr in ex_cont.keys():
-                if not (ex_cont[attr] == -1 or ex_cont[attr] == 'None') and not(attr == "communication" or attr == "policyType"):
+                if not (ex_cont[attr] == -1 or ex_cont[attr] == 'None') and not ('trace-attr' in net_name and (attr == "communication" or attr == "policyType")):
                     event[attr] = copy.copy(ex_cont[attr])
             trace.append(event)
             # increase 5 minutes

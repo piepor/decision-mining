@@ -1,4 +1,5 @@
 import pm4py
+import numpy as np
 import copy
 import pandas as pd
 import argparse
@@ -8,6 +9,20 @@ from pm4py.algo.decision_mining import algorithm as decision_mining
 from pm4py.objects.petri_net.importer import importer as pnml_importer
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.objects.log.importer.xes import importer as xes_importer
+
+def print_matrix(matrix, row_names, col_names):
+    row_cols_name = "   "
+    for col_name in col_names:
+        row_cols_name = "{}     {}".format(row_cols_name, col_name)
+    print(row_cols_name)
+    for i, row_name in enumerate(row_names):
+        row = row_name
+        for j, row_col in enumerate(col_names):
+            if j == 0:
+                row = "{}   {}".format(row, matrix[i, j])
+            else:
+                row = "{}     {}".format(row, matrix[i, j])
+        print(row)
 
 def get_map_place_to_events(net):
     places = dict()
@@ -77,10 +92,11 @@ log = xes_importer.apply('data/log-{}.xes'.format(net_name))
 for trace in log:
     for event in trace:
         for attr in event.keys():
-            try:
-                event[attr] = float(event[attr])
-            except:
-                pass
+            if not attr is bool:
+                try:
+                    event[attr] = float(event[attr])
+                except:
+                    pass
 
 def extract_rules(dt, feature_names):
     #breakpoint()
@@ -122,6 +138,109 @@ def get_feature_names(dataset):
         if not feature == 'target':
             features[feature] = "feature_{}".format(index)
     return features
+
+def get_input_adjacency_matrix(places_list, transitions_list):
+    # adjacency matrix of TRANSITIONS INPUT (place -> transition)
+    #breakpoint()
+    adj = np.zeros((len(transitions_list), len(places_list)))
+    for i, trans in enumerate(transitions_list):
+        for j, place in enumerate(places_list):
+            in_arcs_name = [arc.target.name for arc in place.out_arcs]
+            if trans.name in in_arcs_name:
+                adj[i, j] = 1
+    return adj
+def get_output_adjacency_matrix(places_list, transitions_list):
+    # adjacency matrix of TRANSITIONS OUTPUT (transition -> place)
+    #breakpoint()
+    adj = np.zeros((len(transitions_list), len(places_list)))
+    for i, trans in enumerate(transitions_list):
+        for j, place in enumerate(places_list):
+            out_arcs_name = [arc.source.name for arc in place.in_arcs]
+            if trans.name in out_arcs_name:
+                adj[i, j] = 1
+    return adj
+
+def get_vertex_names_from_c_matrix(c_matrix, row_names, columns_names):
+    vertex_in_loop = set()
+    for i, row in enumerate(row_names):
+        for j, col in enumerate(columns_names):
+            if c_matrix[i, j] == True:
+                #breakpoint()
+                vertex_in_loop.add(row)
+                vertex_in_loop.add(col)
+    #breakpoint()
+    return vertex_in_loop
+
+def detect_loops(net):
+    places_trans_loop = list()
+    places = list(net.places)
+    places_names = [place.name for place in places]
+    trans = list(net.transitions)
+    trans_names = [tran.name for tran in trans]
+    in_adj = get_input_adjacency_matrix(places, trans)
+    out_adj = get_output_adjacency_matrix(places, trans)
+    print_matrix(in_adj, trans_names, places_names)
+    print_matrix(out_adj, trans_names, places_names)
+#breakpoint()
+    old_quadrant_1 = np.zeros((len(trans), len(trans)))
+    old_quadrant_2 = out_adj
+    old_quadrant_3 = in_adj.T
+    old_quadrant_4 = np.zeros((len(places), len(places)))
+#    print(np.logical_and(out_adj, in_adj))
+#    print(np.logical_and(in_adj.T, out_adj.T))
+    cont_r = 1
+    places_trans_in_loop = set()
+    while (cont_r <= len(places) + len(trans)):
+        #breakpoint()
+        cont_r += 1
+        new_quadrant_1 = np.zeros((len(trans), len(trans)))
+        new_quadrant_2 = np.zeros((len(trans), len(places)))
+        new_quadrant_3 = np.zeros((len(places), len(trans)))
+        new_quadrant_4 = np.zeros((len(places), len(places)))
+        c_quadrant_1 = np.zeros((len(trans), len(trans)), dtype=bool)
+        c_quadrant_2 = np.zeros((len(trans), len(places)), dtype=bool)
+        c_quadrant_3 = np.zeros((len(places), len(trans)), dtype=bool)
+        c_quadrant_4 = np.zeros((len(places), len(places)), dtype=bool)
+        if cont_r % 2 == 1:
+            new_quadrant_2 = np.dot(out_adj, old_quadrant_4)
+            new_quadrant_3 = np.dot(in_adj.T, old_quadrant_1)
+            new_quadrant_2T = new_quadrant_2.T
+            new_quadrant_3T = new_quadrant_3.T
+            c_quadrant_2 = np.logical_and(new_quadrant_2, new_quadrant_3T)
+            c_quadrant_3 = np.logical_and(new_quadrant_3, new_quadrant_2T)
+            #breakpoint()
+#            print("C quadrant 2")
+#            print_matrix(c_quadrant_2, trans_names, places_names)
+#            print("C quadrant 3")
+#            print_matrix(c_quadrant_3.T, trans_names, places_names)
+        else:
+            new_quadrant_1 = np.dot(out_adj, old_quadrant_3)
+            new_quadrant_4 = np.dot(in_adj.T, old_quadrant_2)
+            new_quadrant_1T = new_quadrant_1.T
+            new_quadrant_4T = new_quadrant_4.T
+            c_quadrant_1 = np.logical_and(new_quadrant_1, new_quadrant_1T)
+            c_quadrant_4 = np.logical_and(new_quadrant_4, new_quadrant_4T)
+#            print("C quadrant 1")
+#            print_matrix(c_quadrant_1, trans_names, trans_names)
+#            print("C quadrant 4")
+#            print_matrix(c_quadrant_4.T, places_names, places_names)
+
+        old_quadrant_1 = new_quadrant_1
+        old_quadrant_2 = new_quadrant_2
+        old_quadrant_3 = new_quadrant_3
+        old_quadrant_4 = new_quadrant_4
+        vert_loop = get_vertex_names_from_c_matrix(c_quadrant_1, trans_names, trans_names)
+        places_trans_in_loop = places_trans_in_loop.union(vert_loop)
+        vert_loop = get_vertex_names_from_c_matrix(c_quadrant_2, trans_names, places_names)
+        places_trans_in_loop = places_trans_in_loop.union(vert_loop)
+        vert_loop = get_vertex_names_from_c_matrix(c_quadrant_2, trans_names, places_names)
+        vert_loop = get_vertex_names_from_c_matrix(c_quadrant_3, places_names, trans_names)
+        places_trans_in_loop = places_trans_in_loop.union(vert_loop)
+        vert_loop = get_vertex_names_from_c_matrix(c_quadrant_4, places_names, places_names)
+        places_trans_in_loop = places_trans_in_loop.union(vert_loop)
+
+    return places_trans_in_loop
+
 # discover dpn using pm4py library
 #breakpoint()
 #dpnet, im, fm = decision_mining.create_data_petri_nets_with_decisions(log, net, initial_marking, final_marking)
@@ -132,6 +251,8 @@ def get_feature_names(dataset):
 #pn_visualizer.view(gviz)
 
 # get the map of place and events
+loop_vertex = detect_loops(net)
+breakpoint()
 places_events_map = get_map_place_to_events(net)
 # get a dict of data for every decision point
 decision_points_data = dict()
@@ -176,7 +297,7 @@ for trace in log:
 for decision_point in decision_points_data.keys():
     print("")
     print(decision_point)
-    #breakpoint()
+    breakpoint()
     dataset = decision_points_data[decision_point]
     feature_names = get_feature_names(dataset)
     X = copy.copy(dataset).drop(columns=['target'])
@@ -187,6 +308,11 @@ for decision_point in decision_points_data.keys():
     elif net_name == 'running-example-Will-BPM-silent' or net_name == 'running-example-Will-BPM-silent-trace-attr':
         X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, 
             "status_rejected": 0, "communication_email": 0, "communication_letter": 0}, inplace=True)
+    elif net_name == 'running-example-Will-BPM-silent-loops' or net_name == 'running-example-Will-BPM-silent-loops-silent':
+        X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, 
+            "status_rejected": 0, "communication_email": 0, "communication_letter": 0}, inplace=True)
+    else:
+        raise Exception("Model fill NAN value not implemented")
     y = copy.copy(dataset)['target']
     #breakpoint()
     dt = DecisionTreeClassifier()
