@@ -24,7 +24,7 @@ def print_matrix(matrix, row_names, col_names):
                 row = "{}     {}".format(row, matrix[i, j])
         print(row)
 
-def get_map_place_to_events(net):
+def get_map_place_to_events(net, vertex_in_loops):
     places = dict()
     for place in net.places:
         if len(place.out_arcs) >= 2:
@@ -39,15 +39,41 @@ def get_map_place_to_events(net):
                     next_not_silent = []
                     for silent_out_arc in silent_out_arcs:
                         next_place_silent = silent_out_arc.target
-                        next_not_silent = get_next_not_silent(next_place_silent, next_not_silent)
+                        next_not_silent = get_next_not_silent(next_place_silent, next_not_silent, vertex_in_loops)
                     places[place.name][arc.target.name] = next_not_silent
     return places
 
-def get_place_from_transition(places_map, transition):
+def get_out_place_loop(net, vertex_in_loops):
+    out_places = list()
+    for place in net.places:
+        if place.name in vertex_in_loops:
+            out_trans = set([arc.target.name for arc in place.out_arcs])
+            if not out_trans.issubset(vertex_in_loops):
+                out_places.append(place.name)
+    return out_places
+
+def get_in_place_loop(net, vertex_in_loops):
+    in_places = list()
+    for place in net.places:
+        if place.name in vertex_in_loops:
+            in_trans = set([arc.source.name for arc in place.in_arcs])
+            if not in_trans.issubset(vertex_in_loops):
+                in_places.append(place.name)
+    return in_places
+
+def get_place_from_transition(places_map, transition, vertex_in_loops, last_event, in_transitions_loops, out_places_loops, in_places_loops, trans_from_event):
+    is_transition_in_loop = trans_from_event in vertex_in_loops and trans_from_event in in_transitions_loops
     places = list() 
     for place in places_map.keys():
+        is_out_place = place in out_places_loops
+        is_last_event_in_loop = last_event in vertex_in_loops
+        are_both_in_loop = is_last_event_in_loop and trans_from_event in vertex_in_loops
+        are_both_not_in_loop = not is_last_event_in_loop and not trans_from_event in vertex_in_loops
         for trans in places_map[place].keys():
-            if transition in places_map[place][trans]:
+            #if transition in places_map[place][trans]:
+            #    breakpoint()
+            if transition in places_map[place][trans] and (are_both_in_loop or (not are_both_in_loop and place in in_places_loops) or are_both_not_in_loop or (is_last_event_in_loop and is_out_place)):
+                #breakpoint()
                 places.append((place, trans))
     return places
 
@@ -60,8 +86,8 @@ def get_attributes_from_event(event):
             attributes[attribute] = [event[attribute]]
     return attributes
 
-def get_next_not_silent(place, not_silent):
-    if len(place.in_arcs) > 1:
+def get_next_not_silent(place, not_silent, vertex_in_loops):
+    if len(place.in_arcs) > 1 and not place.name in vertex_in_loops:
         return not_silent
     out_arcs_label = [arc.target.label for arc in place.out_arcs]
     if not None in out_arcs_label:
@@ -72,7 +98,7 @@ def get_next_not_silent(place, not_silent):
             not_silent.extend(out_arc.target.label)
         else:
             for out_arc_inn in out_arc.target.out_arcs:
-                not_silent = get_next_not_silent(out_arc_inn.target, not_silent)
+                not_silent = get_next_not_silent(out_arc_inn.target, not_silent, vertex_in_loops)
     return not_silent
 
 # Argument (verbose and net_name)
@@ -139,6 +165,14 @@ def get_feature_names(dataset):
             features[feature] = "feature_{}".format(index)
     return features
 
+def get_trans_from_event(net, event_name):
+    #breakpoint()
+    trans_name = 'None'
+    for trans in net.transitions:
+        if trans.label == event_name:
+            trans_name = trans.name
+    return trans_name
+
 def get_input_adjacency_matrix(places_list, transitions_list):
     # adjacency matrix of TRANSITIONS INPUT (place -> transition)
     #breakpoint()
@@ -149,6 +183,7 @@ def get_input_adjacency_matrix(places_list, transitions_list):
             if trans.name in in_arcs_name:
                 adj[i, j] = 1
     return adj
+
 def get_output_adjacency_matrix(places_list, transitions_list):
     # adjacency matrix of TRANSITIONS OUTPUT (transition -> place)
     #breakpoint()
@@ -252,8 +287,17 @@ def detect_loops(net):
 
 # get the map of place and events
 loop_vertex = detect_loops(net)
-breakpoint()
-places_events_map = get_map_place_to_events(net)
+in_places_loops = get_in_place_loop(net, loop_vertex)
+in_transitions_loop = list()        
+for place_name in in_places_loops:
+    place = [place_net for place_net in net.places if place_net.name == place_name]
+    place = place[0]
+    for out_arc in place.out_arcs:
+        out_transitions = get_next_not_silent(place, [], loop_vertex) 
+        in_transitions_loop.extend(out_transitions)
+out_places_loops = get_out_place_loop(net, loop_vertex)
+#breakpoint()
+places_events_map = get_map_place_to_events(net, loop_vertex)
 # get a dict of data for every decision point
 decision_points_data = dict()
 for place in net.places:
@@ -261,14 +305,21 @@ for place in net.places:
         decision_points_data[place.name] = pd.DataFrame()
 
 # fill the data
-last_k_events = list()
 for trace in log:
     #breakpoint()
     if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
         trace_attr_row = trace.attributes
         #trace_attr_row.pop('concept:name')
+    last_k_events = list()
     for event in trace:
-        places_from_event = get_place_from_transition(places_events_map, event['concept:name'])  
+        trans_from_event = get_trans_from_event(net, event["concept:name"])
+        if len(last_k_events) == 0:
+            last_event_name = 'None'
+        else:
+            last_event_name = last_k_events[-1]['concept:name']
+        last_event_trans = get_trans_from_event(net, last_event_name)
+        places_from_event = get_place_from_transition(places_events_map, event['concept:name'], loop_vertex, last_event_trans, 
+                in_transitions_loop, out_places_loops, in_places_loops, trans_from_event)  
         if len(places_from_event) == 0:
             last_k_events.append(event)
             if len(last_k_events) > k:
@@ -297,7 +348,7 @@ for trace in log:
 for decision_point in decision_points_data.keys():
     print("")
     print(decision_point)
-    breakpoint()
+    #breakpoint()
     dataset = decision_points_data[decision_point]
     feature_names = get_feature_names(dataset)
     X = copy.copy(dataset).drop(columns=['target'])
@@ -310,7 +361,7 @@ for decision_point in decision_points_data.keys():
             "status_rejected": 0, "communication_email": 0, "communication_letter": 0}, inplace=True)
     elif net_name == 'running-example-Will-BPM-silent-loops' or net_name == 'running-example-Will-BPM-silent-loops-silent':
         X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, 
-            "status_rejected": 0, "communication_email": 0, "communication_letter": 0}, inplace=True)
+            "status_rejected": 0, "communication_email": 0, "communication_letter": 0, "appeal": 0}, inplace=True)
     else:
         raise Exception("Model fill NAN value not implemented")
     y = copy.copy(dataset)['target']
