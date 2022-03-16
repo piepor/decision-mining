@@ -1,8 +1,10 @@
 import pm4py
+import os
+from time import time
 import numpy as np
 import copy
 import pandas as pd
-import argparse
+import argcomplete, argparse
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn import metrics
 from pm4py.algo.decision_mining import algorithm as decision_mining
@@ -15,10 +17,12 @@ from utils import get_place_from_transition
 from utils import get_attributes_from_event, get_feature_names
 from utils import extract_rules, get_map_transitions_events
 
+def ModelCompleter(**kwargs):
+    return [name.split('.')[0] for name in os.listdir('models')]
 # Argument (verbose and net_name)
 parser = argparse.ArgumentParser()
-parser.add_argument("net_name", help="name of the petri net file (without extension)", type=str)
-
+parser.add_argument("net_name", help="name of the petri net file (without extension)", type=str).completer = ModelCompleter
+argcomplete.autocomplete(parser)
 # parse arguments
 args = parser.parse_args()
 net_name = args.net_name
@@ -60,6 +64,7 @@ for place in net.places:
         decision_points_data[place.name] = pd.DataFrame()
 
 # fill the data
+tic = time()
 for trace in log:
     #breakpoint()
     if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
@@ -67,6 +72,7 @@ for trace in log:
         #trace_attr_row.pop('concept:name')
     last_k_events = list()
     for event in trace:
+        tic = time()
         trans_from_event = trans_events_map[event["concept:name"]]
         if len(last_k_events) == 0:
             last_event_name = 'None'
@@ -80,9 +86,13 @@ for trace in log:
             if len(last_k_events) > k:
                 last_k_events = last_k_events[-k:]
             continue
+        toc = time()
+        #print("first part of first part: {}".format(toc-tic))
         #breakpoint()
+        tic = time()
         for place_from_event in places_from_event:
             last_k_event_dict = dict()
+            tic_1 = time()
             for last_event in last_k_events:
                 event_attr = get_attributes_from_event(last_event)
                 event_attr.pop('time:timestamp')
@@ -90,16 +100,32 @@ for trace in log:
             if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
                 last_k_event_dict.update(trace_attr_row)
             last_k_event_dict.pop("concept:name")
-            old_df = copy.copy(decision_points_data[place_from_event[0]])
+            #toc_1 = time()
+            #print("first part of second part of first part: {}".format(toc_1-tic_1))
+            tic_1 = time()
+            #old_df = copy.copy(decision_points_data[place_from_event[0]])
+            tic_2 = time()
             new_row = pd.DataFrame.from_dict(last_k_event_dict)
+            tic_3 = time()
             new_row = pd.get_dummies(new_row)
+            toc_3 = time()
+            #print("pandas get dummies: {}".format(toc_3-tic_3))
             new_row["target"] = place_from_event[1]
             #breakpoint()
-            decision_points_data[place_from_event[0]] = pd.concat([old_df, new_row], ignore_index=True)
+            decision_points_data[place_from_event[0]] = pd.concat([decision_points_data[place_from_event[0]], new_row], ignore_index=True)
+            toc_2 = time()
+            #print("pandas create row: {}".format(toc_2-tic_2))
+            toc_1 = time()
+            #print("second part of second part of first part: {}".format(toc_1-tic_1))
         last_k_events.append(event)
         if len(last_k_events) > k:
             last_k_events = last_k_events[-k:]
+        toc = time()
+        #print("second part of first part: {}".format(toc-tic))
+toc = time()
+#print("first part: {}".format(toc-tic))
 
+tic = time()
 for decision_point in decision_points_data.keys():
     print("")
     print(decision_point)
@@ -135,3 +161,5 @@ for decision_point in decision_points_data.keys():
             event_name = label_class
         print(event_name)
         print(rule_extr[label_class])
+toc = time()
+#print("second part: {}".format(toc-tic))
