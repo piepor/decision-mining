@@ -35,9 +35,9 @@ class DecisionNode:
             result_test = "{} = {}".format(attr_name, attr_value)
         elif self._attribute_type == 'continuous':
             if self.continuous_test_function_lower(attr_value):
-                result_test = "{} < {}".format(attr_name, self._threshold)
+                result_test = "{} <= {}".format(attr_name, self._threshold)
             else:
-                result_test = "{} >= {}".format(attr_name, self._threshold)
+                result_test = "{} > {}".format(attr_name, self._threshold)
         elif self._attribute_type == 'boolean':
             result_test = "{} = {}".format(attr_name, attr_value)
         else:
@@ -48,7 +48,7 @@ class DecisionNode:
         return next((child for child in self._childs if child.get_label() == self.run_test(attr_value)), None)
 
     def continuous_test_function_lower(self, attr_value):
-        return attr_value < self._threshold
+        return attr_value <= self._threshold
 
 
 class LeafNode(object):
@@ -71,9 +71,10 @@ class LeafNode(object):
 
 
 class DecisionTree:
-    def __init__(self):
+    def __init__(self, attributes_map):
         self._nodes = set()
         self._root_node = None
+        self.attributes_map = attributes_map
 
     def add_node(self, node, parent_node):
         #parent_node = next(( node for node in self._nodes if node.get_label() == parent_label), None)
@@ -95,7 +96,6 @@ class DecisionTree:
         else:
             return self._predict(row_in, child)
 
-
     def predict(self, data_in):
         #breakpoint()
         attribute = self._root_node.get_attribute()
@@ -108,6 +108,59 @@ class DecisionTree:
                 preds.append(self._predict(row, child))
         return preds
 
+    def get_split(self, node, data_in):
+        max_gain_ratio = None
+        threshold_max_gain_ratio = None
+        split_attribute = None
+        if len(data_in['target'].unique()) > 1:
+            for column in data_in.columns:
+                if not column == 'target':
+                    gain_ratio, threshold = get_split_gain(data_in[[column, 'target']], 
+                        self.attributes_map[column])
+                    if gain_ratio > max_gain_ratio:
+                        max_gain_ratio = gain_ratio
+                        threshold_max_gain_ratio = threshold
+                        split_attribute = column
+        return max_gain_ratio, threshold_max_gain_ratio, split_attribute
+                    
+
+
+def class_entropy(data):
+    ops = data.value_counts() / len(data)
+    return - np.sum(ops * np.log2(ops))
+
+def get_split_gain(data_in, attr_type):
+    attr_name = [col for col in data_in.columns if col != 'target'][0]
+    split_gain = class_entropy(data_in['target'])
+    split_info = 0
+    local_threshold = None
+    if attr_type in ['categorical', 'boolean']:
+        data_counts = data_in[attr_name].value_counts()
+        total_count = len(data_in)
+        for attr_value in data_in[attr_name].unique():
+            #breakpoint()
+            freq_attr = data_counts[attr_value] / total_count
+            split_gain -= freq_attr * class_entropy(data_in[data_in[attr_name] == attr_value]['target'])
+            split_info += - freq_attr * np.log2(freq_attr)
+        gain_ratio = split_gain / split_info
+    elif attr_type == 'continuous':
+        data_in_sorted = data_in[attr_name].sort_values()
+        thresholds = data_in_sorted - (data_in_sorted.diff() / 2)
+        max_gain = 0
+        for threshold in thresholds[1:]:
+            #breakpoint()
+            freq_attr = data_in[data_in[attr_name] <= threshold][attr_name].count() / len(data_in)
+            class_entropy_low = class_entropy(data_in[data_in[attr_name] <= threshold]['target'])
+            class_entropy_high = class_entropy(data_in[data_in[attr_name] > threshold]['target'])
+            split_gain_threshold = split_gain - freq_attr * class_entropy_low - (1 - freq_attr) * class_entropy_high 
+            split_info = - freq_attr * np.log2(freq_attr) - (1 - freq_attr) * np.log2(1 - freq_attr) 
+            gain_ratio_temp = split_gain_threshold / split_info
+            if gain_ratio_temp > max_gain:
+                local_threshold = threshold
+                max_gain = gain_ratio_temp
+            gain_ratio = max_gain
+            
+    return gain_ratio, local_threshold
 
 
 leaf_data1 = {'ciop':32}
@@ -124,10 +177,10 @@ dt = DecisionTree()
 decision_point_root = DecisionNode('root', 'categorical', 'color')
 decision_point_1 = DecisionNode('color = brown', 'continuous', 'amount:200')
 decision_point_2 = DecisionNode('color = black', 'continuous', 'amount:500')
-decision_point_3 = DecisionNode('amount < 200.0', 'boolean', 'isStupid')
-decision_point_4 = DecisionNode('amount >= 200.0', 'boolean', 'isStupid')
-decision_point_5 = DecisionNode('amount < 500.0', 'boolean', 'isStupid')
-decision_point_6 = DecisionNode('amount >= 500.0', 'boolean', 'isStupid')
+decision_point_3 = DecisionNode('amount <= 200.0', 'boolean', 'isStupid')
+decision_point_4 = DecisionNode('amount > 200.0', 'boolean', 'isStupid')
+decision_point_5 = DecisionNode('amount <= 500.0', 'boolean', 'isStupid')
+decision_point_6 = DecisionNode('amount > 500.0', 'boolean', 'isStupid')
 leaf_node1 = LeafNode(leaf_data1, 'isStupid = True')
 leaf_node2 = LeafNode(leaf_data2, 'isStupid = False')
 leaf_node3 = LeafNode(leaf_data3, 'isStupid = True')
@@ -151,8 +204,11 @@ dt.add_node(leaf_node5, decision_point_5)
 dt.add_node(leaf_node6, decision_point_5)
 dt.add_node(leaf_node7, decision_point_6)
 dt.add_node(leaf_node8, decision_point_6)
-df = pd.DataFrame({'isStupid': [True, False, True, False, True, False, True, False], 
-    'color': ['brown', 'brown', 'brown', 'brown', 'black', 'black','black', 'black'], 
-    'amount': [100, 50, 300, 400, 250, 450, 550, 1000]})
-out_pred = dt.predict(df)
-print(out_pred)
+#out_pred = dt.predict(df[['isStupid', 'color', 'amount']])
+# new data
+df = pd.DataFrame({'Looks': ['handsome', 'handsome', 'handsome', 'repulsive', 'repulsive', 'repulsive', 'handsome'], 
+    'Alcoholic_beverage': [True, True, False, False, True, True,True], 
+    'Eloquence': ['high', 'low', 'average', 'average', 'low', 'high', 'average'], 
+    'Money_spent': ['lots', 'little', 'lots', 'little', 'lots', 'lots', 'lots'],
+    'target': ['+', '-', '+', '-', '-', '+', '+']})
+#breakpoint()
