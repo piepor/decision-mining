@@ -115,9 +115,12 @@ def get_attributes_from_event(event) -> dict:
     # intialize
     attributes = dict()
     for attribute in event.keys():
-        try:
-            attributes[attribute] = [float(event[attribute])]
-        except:
+        if not isinstance(event[attribute], bool):
+            try:
+                attributes[attribute] = [float(event[attribute])]
+            except:
+                attributes[attribute] = [event[attribute]]
+        else:
             attributes[attribute] = [event[attribute]]
     return attributes
 

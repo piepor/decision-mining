@@ -5,7 +5,7 @@ import numpy as np
 import copy
 import pandas as pd
 import argcomplete, argparse
-from sklearn.tree import DecisionTreeClassifier, export_text
+#from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn import metrics
 from pm4py.algo.decision_mining import algorithm as decision_mining
 from pm4py.objects.petri_net.importer import importer as pnml_importer
@@ -16,6 +16,7 @@ from utils import get_out_place_loop, get_map_place_to_events
 from utils import get_place_from_transition
 from utils import get_attributes_from_event, get_feature_names
 from utils import extract_rules, get_map_transitions_events
+from DecisionTree import DecisionTree
 
 def ModelCompleter(**kwargs):
     return [name.split('.')[0] for name in os.listdir('models')]
@@ -36,7 +37,9 @@ log = xes_importer.apply('data/log-{}.xes'.format(net_name))
 for trace in log:
     for event in trace:
         for attr in event.keys():
-            if not attr is bool:
+           # if attr == 'appeal':
+           #     breakpoint()
+            if not isinstance(event[attr], bool):
                 try:
                     event[attr] = float(event[attr])
                 except:
@@ -65,6 +68,7 @@ for place in net.places:
 
 # fill the data
 tic = time()
+attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean', 'status': 'categorical', 'communication': 'categorical'}
 for trace in log:
     #breakpoint()
     if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
@@ -86,13 +90,13 @@ for trace in log:
             if len(last_k_events) > k:
                 last_k_events = last_k_events[-k:]
             continue
-        toc = time()
+        #toc = time()
         #print("first part of first part: {}".format(toc-tic))
         #breakpoint()
         #tic = time()
         for place_from_event in places_from_event:
             last_k_event_dict = dict()
-            tic_1 = time()
+            #tic_1 = time()
             for last_event in last_k_events:
                 event_attr = get_attributes_from_event(last_event)
                 event_attr.pop('time:timestamp')
@@ -107,11 +111,10 @@ for trace in log:
             #tic_2 = time()
             new_row = pd.DataFrame.from_dict(last_k_event_dict)
             #tic_3 = time()
-            new_row = pd.get_dummies(new_row)
+            #new_row = pd.get_dummies(new_row)
             #toc_3 = time()
             #print("pandas get dummies: {}".format(toc_3-tic_3))
             new_row["target"] = place_from_event[1]
-            #breakpoint()
             decision_points_data[place_from_event[0]] = pd.concat([decision_points_data[place_from_event[0]], new_row], ignore_index=True)
             #toc_2 = time()
             #print("pandas create row: {}".format(toc_2-tic_2))
@@ -129,37 +132,13 @@ for trace in log:
 for decision_point in decision_points_data.keys():
     print("")
     print(decision_point)
-    #breakpoint()
     dataset = decision_points_data[decision_point]
-    feature_names = get_feature_names(dataset)
-    X = copy.copy(dataset).drop(columns=['target'])
-    if net_name == 'one-split-PetriNet-categorical':
-        X.fillna(value={"A": -1, "cat_cat_1": 0, "cat_cat_2": 0}, inplace=True)
-    elif net_name == 'running-example-Will-BPM':
-        X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, "status_rejected": 0}, inplace=True)
-    elif net_name == 'running-example-Will-BPM-silent' or net_name == 'running-example-Will-BPM-silent-trace-attr':
-        X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, 
-            "status_rejected": 0, "communication_email": 0, "communication_letter": 0}, inplace=True)
-    elif net_name == 'running-example-Will-BPM-silent-loops' or net_name == 'running-example-Will-BPM-silent-loops-silent':
-        X.fillna(value={"policyType_premium": 0, "policyType_normal": 0, "status_approved": 0, 
-            "status_rejected": 0, "communication_email": 0, "communication_letter": 0, "appeal": 0}, inplace=True)
-    else:
-        raise Exception("Model fill NAN value not implemented")
-    y = copy.copy(dataset)['target']
     #breakpoint()
-    dt = DecisionTreeClassifier()
-    dt = dt.fit(X, y)
-    y_pred = dt.predict(X)
-    print("Train accuracy: {}".format(metrics.accuracy_score(y, y_pred)))
-    print(export_text(dt))
-    rule_extr = extract_rules(dt, feature_names)
-    for label_class in rule_extr.keys():
-        event_name = places_events_map[decision_point]
-        if not isinstance(event_name[label_class], list):
-            event_name = event_name[label_class]
-        else:
-            event_name = label_class
-        print(event_name)
-        print(rule_extr[label_class])
+    feature_names = get_feature_names(dataset)
+    dt = DecisionTree(attributes_map)
+    dt.fit(dataset)
+    y_pred = dt.predict(dataset.drop(columns=['target']))
+    print("Train accuracy: {}".format(metrics.accuracy_score(dataset['target'], y_pred)))
+    print(dt.extract_rules())
 toc = time()
 print("Total time: {}".format(toc-tic))

@@ -1,4 +1,4 @@
-from decision_tree_utils import class_entropy, get_split_gain, get_total_threshold
+from decision_tree_utils import class_entropy, get_split_gain, get_total_threshold, extract_rule
 from Nodes import DecisionNode, LeafNode
 from typing import Union
 
@@ -17,6 +17,8 @@ class DecisionTree(object):
 
     def delete_node(self, node) -> None:
         """ Removes a node from the tree's set of nodes and disconnects it from its parent node """
+        if node.get_parent_node() is None:
+            breakpoint()
         parent_node = node.get_parent_node()
         parent_node.delete_child(node)
         self._nodes.remove(node)
@@ -43,9 +45,10 @@ class DecisionTree(object):
 
     def predict(self, data_in):
         """ Strating from the root, predicts the class corresponding to the features contained in "data_in" """
-        attribute = self._root_node.get_attribute()
+        attribute = self._root_node.get_attribute().split(":")[0]
         preds = list()
         # data_in is a pandas DataFrame
+        #breakpoint()
         for index, row in data_in.iterrows():
             child = self._root_node.get_child(row[attribute])
             if isinstance(child, LeafNode):
@@ -64,7 +67,7 @@ class DecisionTree(object):
             max_gain_ratio = 0
             for column in data_in.columns:
                 # gain ratio and threshold (if exist) for every feature 
-                if not column == 'target':
+                if not column == 'target' and len(data_in[column].unique()) > 1:
                     gain_ratio, threshold = get_split_gain(data_in[[column, 'target']], 
                         self._attributes_map[column])
                     # keep the best split
@@ -95,7 +98,8 @@ class DecisionTree(object):
                 self.add_node(node, parent_node)
             else:
                 # compute global threshold from local one
-                threshold = get_total_threshold(data_in, local_threshold):
+                #breakpoint()
+                threshold = get_total_threshold(data_in[split_attribute], local_threshold)
                 # if the attribute with the greatest gain is continuous than the spit is binary
                 if self._attributes_map[split_attribute] == 'continuous':
                     node.set_attribute('{}:{}'.format(split_attribute, threshold), 'continuous')
@@ -117,6 +121,8 @@ class DecisionTree(object):
         else:
             # the node (default type "DecisionNode") is "transformed" in a leaf node ("LeafNode" type)
             parent_node = node.get_parent_node()
+            if parent_node is None:
+                breakpoint()
             self.delete_node(node)
             node = LeafNode(dict(data_in['target'].value_counts()), node.get_label())
             self.add_node(node, parent_node)
@@ -150,3 +156,23 @@ class DecisionTree(object):
         root_node = DecisionNode('root')
         self.add_node(root_node, None)
         self.split_node(self._root_node, data_in)
+
+    def get_leaves_nodes(self):
+        """ Returns a list of the leaves nodes """
+        return [node for node in self._nodes if isinstance(node, LeafNode)]
+        
+    def extract_rules(self): 
+        """ Returns a dictionary containing rulws extracted from the tree, already in logical form """
+        rules = dict()
+        # starting from the leaves going back to the root
+        for leaf_node in self.get_leaves_nodes():
+            rule = ""
+            if not leaf_node._label_class in rules.keys():
+                rules[leaf_node._label_class] = list()
+            rule = "{} && {}".format(leaf_node.get_label(), extract_rule(leaf_node.get_parent_node(), rule))
+            rule = "&&".join(rule.split("&&")[:-1])
+            rules[leaf_node._label_class].append(rule)
+        for target_class in rules.keys():
+            rules[target_class] = "|| ".join(rules[target_class])
+        return rules
+

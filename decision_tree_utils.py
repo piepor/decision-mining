@@ -1,7 +1,15 @@
 import numpy as np
 
-def get_total_threshold(data, local_threshold):
-    return data[data.le(local_threshold)].max()
+def extract_rule(node, rule):
+    """ Recursively adds rule for every node visited until the root is found """
+    if node.get_label() == 'root':
+        return rule
+    else:
+        return "{} && {}".format(node.get_label(), extract_rule(node.get_parent_node(), rule))
+
+def get_total_threshold(data, local_threshold, decimals=2):
+    #breakpoint()
+    return np.round(data[data.le(local_threshold)].max(), 2)
 
 def class_entropy(data):
     ops = data.value_counts() / len(data)
@@ -21,6 +29,8 @@ def get_split_gain(data_in, attr_type):
             split_gain -= freq_attr * class_entropy(data_in[data_in[attr_name] == attr_value]['target'])
             split_info += - freq_attr * np.log2(freq_attr)
         #breakpoint()
+#        if split_info == 0:
+#            breakpoint()
         gain_ratio = split_gain / split_info
     elif attr_type == 'continuous':
         data_in_sorted = data_in[attr_name].sort_values()
