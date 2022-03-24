@@ -27,7 +27,7 @@ argcomplete.autocomplete(parser)
 # parse arguments
 args = parser.parse_args()
 net_name = args.net_name
-k = 1
+k = 2
 
 try:
     net, initial_marking, final_marking = pnml_importer.apply("models/{}.pnml".format(net_name))
@@ -115,11 +115,14 @@ for trace in log:
             #toc_3 = time()
             #print("pandas get dummies: {}".format(toc_3-tic_3))
             new_row["target"] = place_from_event[1]
+#            if new_row["target"][0] == 'trans_G':
+#                breakpoint()
             decision_points_data[place_from_event[0]] = pd.concat([decision_points_data[place_from_event[0]], new_row], ignore_index=True)
             #toc_2 = time()
             #print("pandas create row: {}".format(toc_2-tic_2))
             #toc_1 = time()
             #print("second part of second part of first part: {}".format(toc_1-tic_1))
+        #breakpoint()
         last_k_events.append(event)
         if len(last_k_events) > k:
             last_k_events = last_k_events[-k:]

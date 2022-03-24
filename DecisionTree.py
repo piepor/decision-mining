@@ -1,6 +1,7 @@
 from decision_tree_utils import class_entropy, get_split_gain, get_total_threshold, extract_rule
 from Nodes import DecisionNode, LeafNode
 from typing import Union
+import pandas as pd
 
 
 class DecisionTree(object):
@@ -17,8 +18,8 @@ class DecisionTree(object):
 
     def delete_node(self, node) -> None:
         """ Removes a node from the tree's set of nodes and disconnects it from its parent node """
-        if node.get_parent_node() is None:
-            breakpoint()
+#        if node.get_parent_node() is None:
+#            breakpoint()
         parent_node = node.get_parent_node()
         parent_node.delete_child(node)
         self._nodes.remove(node)
@@ -59,6 +60,7 @@ class DecisionTree(object):
 
     def get_split(self, data_in) -> Union[float, float, str]:
         """ Compute the best split of the input data """
+        #breakpoint()
         max_gain_ratio = None
         threshold_max_gain_ratio = None
         split_attribute = None
@@ -67,7 +69,7 @@ class DecisionTree(object):
             max_gain_ratio = 0
             for column in data_in.columns:
                 # gain ratio and threshold (if exist) for every feature 
-                if not column == 'target' and len(data_in[column].unique()) > 1:
+                if not column in ['target', 'weight'] and len(data_in[column].unique()) > 1:
                     gain_ratio, threshold = get_split_gain(data_in[[column, 'target']], 
                         self._attributes_map[column])
                     # keep the best split
@@ -79,11 +81,13 @@ class DecisionTree(object):
 
     def split_node(self, node, data_in) -> None:
         """ Recurseviley split a node based on "data_in" until some conditions are met and a leaves nodes are added to the tree """ 
+        #breakpoint()
         # categorical and boolean arguments can be selected only one time in a "line of succession"
         if not ('<' in node.get_label() or '>' in node.get_label()) and not node.get_label() == 'root': 
             data_in = data_in.copy(deep=True) 
             data_in = data_in.drop(columns=[node.get_label().split()[0]])
         max_gain_ratio, local_threshold, split_attribute = self.get_split(data_in)
+        #breakpoint()
         # compute error predicting the most frequent class without splitting
         node_errors = data_in['target'].value_counts().sum() - data_in['target'].value_counts().max()
         # if split attribute does not exist then is a leaf 
@@ -106,23 +110,36 @@ class DecisionTree(object):
                     # create DecisionNode, recursion and add node
                     low_split_node = DecisionNode('{} <= {}'.format(split_attribute, threshold))
                     self.add_node(low_split_node, node)
-                    self.split_node(low_split_node, data_in[data_in[split_attribute] <= threshold])
+                    data_known = data_in[data_in[split_attribute] != '?']
+                    data_unknown = data_in[data_in[split_attribute] == '?']
+                    weight_unknown = len(data_known[data_known[split_attribute] <= threshold]) / len(data_known)
+                    data_unknown['weight'] = [weight_unknown] * len(data_unknown)
+                    new_data_low = pd.concat([data_known[data_known[split_attribute] <= threshold], data_unknown], ignore_index=True)
+                    self.split_node(low_split_node, new_data_low)
                     high_split_node = DecisionNode('{} > {}'.format(split_attribute, threshold))
                     self.add_node(high_split_node, node)
-                    self.split_node(high_split_node, data_in[data_in[split_attribute] > threshold])
+                    weight_unknown = len(data_known[data_known[split_attribute] > threshold]) / len(data_known)
+                    data_unknown['weight'] = [weight_unknown] * len(data_unknown)
+                    new_data_high = pd.concat([data_known[data_known[split_attribute] > threshold], data_unknown], ignore_index=True)
+                    self.split_node(high_split_node, new_data_high)
                 else:
                     # if the attribute is categorical or boolean than there is a node for every possible attribute value
                     node.set_attribute(split_attribute, self._attributes_map[split_attribute])
-                    for attr_value in data_in[split_attribute].unique():
+                    data_known = data_in[data_in[split_attribute] != '?']
+                    data_unknown = data_in[data_in[split_attribute] == '?']
+                    for attr_value in data_known[split_attribute].unique():
                         # create DecisionNode, recursion and add node
                         child_node = DecisionNode('{} = {}'.format(split_attribute, attr_value))
                         self.add_node(child_node, node)
-                        self.split_node(child_node, data_in[data_in[split_attribute] == attr_value])
+                        weight_unknown = len(data_known[data_known[split_attribute] == attr_value]) / len(data_known)
+                        data_unknown['weight'] = [weight_unknown] * len(data_unknown)
+                        new_data = pd.concat([data_known[data_known[split_attribute] == attr_value], data_unknown], ignore_index=True)
+                        self.split_node(child_node, new_data)
         else:
             # the node (default type "DecisionNode") is "transformed" in a leaf node ("LeafNode" type)
             parent_node = node.get_parent_node()
-            if parent_node is None:
-                breakpoint()
+#            if parent_node is None:
+#                breakpoint()
             self.delete_node(node)
             node = LeafNode(dict(data_in['target'].value_counts()), node.get_label())
             self.add_node(node, parent_node)
@@ -155,6 +172,9 @@ class DecisionTree(object):
         """ Fits the tree on "data_in" """
         root_node = DecisionNode('root')
         self.add_node(root_node, None)
+        # add weight to dataset in order to handle unknown values
+        data_in['weight'] = [1] * len(data_in)
+        data_in = data_in.fillna('?')
         self.split_node(self._root_node, data_in)
 
     def get_leaves_nodes(self):

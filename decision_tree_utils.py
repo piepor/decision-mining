@@ -7,9 +7,9 @@ def extract_rule(node, rule):
     else:
         return "{} && {}".format(node.get_label(), extract_rule(node.get_parent_node(), rule))
 
-def get_total_threshold(data, local_threshold, decimals=2):
+def get_total_threshold(data, local_threshold):
     #breakpoint()
-    return np.round(data[data.le(local_threshold)].max(), 2)
+    return data[data.le(local_threshold)].max()
 
 def class_entropy(data):
     ops = data.value_counts() / len(data)
@@ -23,16 +23,22 @@ def get_split_gain(data_in, attr_type):
     if attr_type in ['categorical', 'boolean']:
         data_counts = data_in[attr_name].value_counts()
         total_count = len(data_in)
+        freq_known = 1
         for attr_value in data_in[attr_name].unique():
             #breakpoint()
             freq_attr = data_counts[attr_value] / total_count
-            split_gain -= freq_attr * class_entropy(data_in[data_in[attr_name] == attr_value]['target'])
+            if not attr_value == '?':
+                split_gain -= freq_attr * class_entropy(data_in[data_in[attr_name] == attr_value]['target'])
+            else:
+                freq_known = 1 - freq_attr
             split_info += - freq_attr * np.log2(freq_attr)
         #breakpoint()
 #        if split_info == 0:
 #            breakpoint()
-        gain_ratio = split_gain / split_info
+        gain_ratio = (freq_known * split_gain) / split_info
     elif attr_type == 'continuous':
+        freq_known = 1 - len(data_in[data_in[attr_name] != '?'])
+        data_in = data_in[data_in[attr_name] != '?']
         data_in_sorted = data_in[attr_name].sort_values()
         thresholds = data_in_sorted - (data_in_sorted.diff() / 2)
         max_gain = 0
@@ -43,7 +49,8 @@ def get_split_gain(data_in, attr_type):
             class_entropy_high = class_entropy(data_in[data_in[attr_name] > threshold]['target'])
             split_gain_threshold = split_gain - freq_attr * class_entropy_low - (1 - freq_attr) * class_entropy_high 
             split_info = - freq_attr * np.log2(freq_attr) - (1 - freq_attr) * np.log2(1 - freq_attr) 
-            gain_ratio_temp = split_gain_threshold / split_info
+            split_info += - (1 - freq_known) * np.log2(1 - freq_known) 
+            gain_ratio_temp = (freq_known * split_gain_threshold) / split_info
             if gain_ratio_temp > max_gain:
                 local_threshold = threshold
                 max_gain = gain_ratio_temp
