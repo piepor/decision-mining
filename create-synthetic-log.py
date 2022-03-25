@@ -71,6 +71,15 @@ def get_ex_cont(model_name):
         appeal = choice([True, False])
         ex_cont = {"amount": a[0], "policyType": policy_type, "status": status,
                 "communication": communication, "appeal": appeal}
+    elif model_name == 'running-example-Will-BPM-silent-loops-silent-loopB':
+        a = np.random.uniform(0, 1000, 1)
+        status = choice(["approved", "rejected"])
+        policy_type = choice(["normal", "premium"])
+        communication = choice(["email", "letter"])
+        appeal = choice([True, False])
+        discarded = choice([True, False])
+        ex_cont = {"amount": a[0], "policyType": policy_type, "status": status,
+                "communication": communication, "appeal": appeal, "discarded": discarded}
     else:
         raise Exception("Model name not implemented.")
     
@@ -108,6 +117,7 @@ for i in tqdm(range(NO_TRACES)):
         if len(all_enabled_trans) == 0:
             breakpoint()
         trans = choice(list(all_enabled_trans))
+        #breakpoint()
         if "readVariable" in trans.properties:
             for read_var in trans.properties["readVariable"]:
                 ex_cont[read_var] = ex_cont_total[read_var]
@@ -118,7 +128,10 @@ for i in tqdm(range(NO_TRACES)):
         #breakpoint()
         if not trans.label is None:
             visited_elements.append(tuple([trans, ex_cont]))
-        if 'loops' in net_name:
+        if 'loopB' in net_name:
+            if trans.name in ["trans_S"]:
+                ex_cont_total["appeal"] = False
+        elif 'loops' in net_name:
             if trans.name in ["trans_R"]:
                 ex_cont_total["appeal"] = False
 

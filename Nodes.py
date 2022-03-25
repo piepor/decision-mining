@@ -86,6 +86,7 @@ class LeafNode(Node):
     def __init__(self, classes, parent_attribute_value):
         super().__init__(parent_attribute_value)
         self._classes = classes
+        # TODO implement weigth count for prediction of data woth unknown attribute
         self._label_class = max(self._classes.items(), key=operator.itemgetter(1))[0]
 
     def get_class_names(self) -> list:

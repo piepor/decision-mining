@@ -15,14 +15,14 @@
           <text>p_1</text>
         </name>
       </place>
-      <place id="p_2">
-        <name>
-          <text>p_2</text>
-        </name>
-      </place>
       <place id="p_0">
         <name>
           <text>p_0</text>
+        </name>
+      </place>
+      <place id="p_2">
+        <name>
+          <text>p_2</text>
         </name>
       </place>
       <place id="p_4">
@@ -70,23 +70,24 @@
           <text>p_10</text>
         </name>
       </place>
-      <transition id="trans_P">
+      <transition id="trans_O">
         <name>
-          <text>Evaluate Appeal</text>
+          <text>trans_O</text>
         </name>
-      </transition>
-      <transition id="trans_Q" guard="appeal == False">
-        <name>
-          <text>Archive</text>
-        </name>
-        <readVariable>appeal</readVariable>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fe4f4bbd-b344-4375-b365-095342285e15"/>
       </transition>
       <transition id="trans_R" guard="appeal == True">
         <name>
           <text>trans_R</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e6660c45-0b23-46ae-bfc5-5f63f729b9bd"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="851a43ea-ee76-4a63-9434-cf593c205a27"/>
         <readVariable>appeal</readVariable>
+      </transition>
+      <transition id="trans_M" guard="communication == &quot;email&quot;">
+        <name>
+          <text>Send approval email</text>
+        </name>
+        <readVariable>communication</readVariable>
       </transition>
       <transition id="trans_A">
         <name>
@@ -122,14 +123,14 @@
         <name>
           <text>trans_F</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="bc94852c-8ccd-4d3b-8301-4960227c4afc"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ceaa8861-a732-4bc7-a46c-30fb8cba5070"/>
         <readVariable>status</readVariable>
       </transition>
       <transition id="trans_G" guard="status == &quot;approved&quot;">
         <name>
           <text>trans_G</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="753cce7d-d22e-4b8e-b2e4-0e1c01386c2f"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ccfa389f-207f-4bef-baea-e93766f4a8f7"/>
         <readVariable>status</readVariable>
       </transition>
       <transition id="trans_H" guard="communication == &quot;letter&quot;">
@@ -154,56 +155,55 @@
         <name>
           <text>trans_N</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="cfa6f746-6864-47bc-8dd8-9852de99a340"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e2b34720-5e51-481b-a170-77b92d3e9bef"/>
       </transition>
-      <transition id="trans_O">
+      <transition id="trans_Q" guard="appeal == False">
         <name>
-          <text>trans_O</text>
+          <text>Archive</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="96fab64a-b817-4414-bc11-c7020fa0c338"/>
+        <readVariable>appeal</readVariable>
       </transition>
-      <transition id="trans_M" guard="communication == &quot;email&quot;">
+      <transition id="trans_P">
         <name>
-          <text>Send approval email</text>
+          <text>Evaluate Appeal</text>
         </name>
-        <readVariable>communication</readVariable>
       </transition>
-      <arc id="140026295731728" source="p_5" target="trans_L"/>
-      <arc id="140026295730960" source="p_2" target="trans_F"/>
-      <arc id="140026295693072" source="source" target="trans_A"/>
-      <arc id="140026295730576" source="p_1" target="trans_D"/>
-      <arc id="140026295731344" source="trans_F" target="p_4"/>
-      <arc id="140026295732112" source="trans_L" target="p_7"/>
-      <arc id="140026295732496" source="trans_N" target="p_8"/>
-      <arc id="140026295732880" source="p_9" target="trans_P"/>
-      <arc id="140026295733264" source="trans_Q" target="sink"/>
-      <arc id="140026295730480" source="trans_C" target="p_1"/>
-      <arc id="140026295730864" source="p_2" target="trans_E"/>
-      <arc id="140026295731248" source="trans_E" target="p_8"/>
-      <arc id="140026295731632" source="trans_G" target="p_5"/>
-      <arc id="140026295732016" source="trans_I" target="p_6"/>
-      <arc id="140026295732400" source="p_7" target="trans_O"/>
-      <arc id="140026295732784" source="p_8" target="trans_P"/>
-      <arc id="140026295733168" source="p_10" target="trans_Q"/>
-      <arc id="140026295731536" source="p_4" target="trans_I"/>
-      <arc id="140026295731152" source="p_3" target="trans_G"/>
-      <arc id="140026295730384" source="trans_B" target="p_1"/>
-      <arc id="140026295693264" source="p_0" target="trans_B"/>
-      <arc id="140026295730768" source="trans_D" target="p_3"/>
-      <arc id="140026295731920" source="trans_H" target="p_6"/>
-      <arc id="140026295732304" source="p_6" target="trans_N"/>
-      <arc id="140026295732688" source="trans_O" target="p_9"/>
-      <arc id="140026295733072" source="p_10" target="trans_R"/>
-      <arc id="140026295731440" source="p_4" target="trans_H"/>
-      <arc id="140026295731056" source="p_3" target="trans_F"/>
-      <arc id="140026295693168" source="trans_A" target="p_0"/>
-      <arc id="140026295730288" source="p_0" target="trans_C"/>
-      <arc id="140026295730672" source="trans_D" target="p_2"/>
-      <arc id="140026295731824" source="p_5" target="trans_M"/>
-      <arc id="140026295732208" source="trans_M" target="p_7"/>
-      <arc id="140026295732592" source="trans_N" target="p_9"/>
-      <arc id="140026295732976" source="trans_P" target="p_10"/>
-      <arc id="140026295733360" source="trans_R" target="p_1"/>
+      <arc id="140540097705488" source="p_2" target="trans_F"/>
+      <arc id="140540097706256" source="p_5" target="trans_L"/>
+      <arc id="140540097705872" source="trans_F" target="p_4"/>
+      <arc id="140540097704720" source="p_0" target="trans_B"/>
+      <arc id="140540097705104" source="p_1" target="trans_D"/>
+      <arc id="140540097706640" source="trans_L" target="p_7"/>
+      <arc id="140540097707024" source="trans_N" target="p_8"/>
+      <arc id="140540097707408" source="p_9" target="trans_P"/>
+      <arc id="140540097707792" source="trans_Q" target="sink"/>
+      <arc id="140540097705776" source="trans_E" target="p_8"/>
+      <arc id="140540097704624" source="trans_A" target="p_0"/>
+      <arc id="140540097705008" source="trans_C" target="p_1"/>
+      <arc id="140540097705392" source="p_2" target="trans_E"/>
+      <arc id="140540097706160" source="trans_G" target="p_5"/>
+      <arc id="140540097706544" source="trans_I" target="p_6"/>
+      <arc id="140540097706928" source="p_7" target="trans_O"/>
+      <arc id="140540097707312" source="p_8" target="trans_P"/>
+      <arc id="140540097707696" source="p_10" target="trans_Q"/>
+      <arc id="140540097705680" source="p_3" target="trans_G"/>
+      <arc id="140540097704528" source="source" target="trans_A"/>
+      <arc id="140540097704912" source="trans_B" target="p_1"/>
+      <arc id="140540097705296" source="trans_D" target="p_3"/>
+      <arc id="140540097706064" source="p_4" target="trans_I"/>
+      <arc id="140540097706448" source="trans_H" target="p_6"/>
+      <arc id="140540097706832" source="p_6" target="trans_N"/>
+      <arc id="140540097707216" source="trans_O" target="p_9"/>
+      <arc id="140540097707600" source="p_10" target="trans_R"/>
+      <arc id="140540097705584" source="p_3" target="trans_F"/>
+      <arc id="140540097704816" source="p_0" target="trans_C"/>
+      <arc id="140540097705200" source="trans_D" target="p_2"/>
+      <arc id="140540097705968" source="p_4" target="trans_H"/>
+      <arc id="140540097706352" source="p_5" target="trans_M"/>
+      <arc id="140540097706736" source="trans_M" target="p_7"/>
+      <arc id="140540097707120" source="trans_N" target="p_9"/>
+      <arc id="140540097707504" source="trans_P" target="p_10"/>
+      <arc id="140540097707888" source="trans_R" target="p_1"/>
     </page>
     <finalmarkings>
       <marking>

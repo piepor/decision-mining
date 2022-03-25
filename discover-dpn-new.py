@@ -27,7 +27,7 @@ argcomplete.autocomplete(parser)
 # parse arguments
 args = parser.parse_args()
 net_name = args.net_name
-k = 2
+k = 1
 
 try:
     net, initial_marking, final_marking = pnml_importer.apply("models/{}.pnml".format(net_name))
@@ -68,7 +68,8 @@ for place in net.places:
 
 # fill the data
 tic = time()
-attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean', 'status': 'categorical', 'communication': 'categorical'}
+attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean',
+        'status': 'categorical', 'communication': 'categorical', 'discarded': 'boolean'}
 for trace in log:
     #breakpoint()
     if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
@@ -76,7 +77,6 @@ for trace in log:
         #trace_attr_row.pop('concept:name')
     last_k_events = list()
     for event in trace:
-        #tic = time()
         trans_from_event = trans_events_map[event["concept:name"]]
         if len(last_k_events) == 0:
             last_event_name = 'None'
@@ -90,13 +90,8 @@ for trace in log:
             if len(last_k_events) > k:
                 last_k_events = last_k_events[-k:]
             continue
-        #toc = time()
-        #print("first part of first part: {}".format(toc-tic))
-        #breakpoint()
-        #tic = time()
         for place_from_event in places_from_event:
             last_k_event_dict = dict()
-            #tic_1 = time()
             for last_event in last_k_events:
                 event_attr = get_attributes_from_event(last_event)
                 event_attr.pop('time:timestamp')
@@ -104,39 +99,17 @@ for trace in log:
             if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
                 last_k_event_dict.update(trace_attr_row)
             last_k_event_dict.pop("concept:name")
-            #toc_1 = time()
-            #print("first part of second part of first part: {}".format(toc_1-tic_1))
-            #tic_1 = time()
-            #old_df = copy.copy(decision_points_data[place_from_event[0]])
-            #tic_2 = time()
             new_row = pd.DataFrame.from_dict(last_k_event_dict)
-            #tic_3 = time()
-            #new_row = pd.get_dummies(new_row)
-            #toc_3 = time()
-            #print("pandas get dummies: {}".format(toc_3-tic_3))
             new_row["target"] = place_from_event[1]
-#            if new_row["target"][0] == 'trans_G':
-#                breakpoint()
             decision_points_data[place_from_event[0]] = pd.concat([decision_points_data[place_from_event[0]], new_row], ignore_index=True)
-            #toc_2 = time()
-            #print("pandas create row: {}".format(toc_2-tic_2))
-            #toc_1 = time()
-            #print("second part of second part of first part: {}".format(toc_1-tic_1))
-        #breakpoint()
         last_k_events.append(event)
         if len(last_k_events) > k:
             last_k_events = last_k_events[-k:]
-        #toc = time()
-        #print("second part of first part: {}".format(toc-tic))
-#toc = time()
-#print("first part: {}".format(toc-tic))
 
-#tic = time()
 for decision_point in decision_points_data.keys():
     print("")
     print(decision_point)
     dataset = decision_points_data[decision_point]
-    #breakpoint()
     feature_names = get_feature_names(dataset)
     dt = DecisionTree(attributes_map)
     dt.fit(dataset)

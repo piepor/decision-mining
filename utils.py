@@ -84,10 +84,11 @@ def get_place_from_transition(places_map, transition, vertex_in_loops, last_even
 
     Given a lot of input, for every decision point checks different conditions in order to decide if it has to be added to the list of 
     decision points for that transition. The place is considered a valid candidate if 
-    I) the transition considered and the previous are both in a loop
+    I) the transition considered and the previous are both in a loop and the place belong to a loop
     II) the transition considered and the previous are both not in a loop
     III) the transition considered is in loop, the last is not and the place is an input place of the loop
     IV) the last transition is in the loop and the place is an output place of the loop
+    V) one transition and the place are outside the loop (deals with invisible activities before the loop)
     """
     # TODO simplify conditions and input arguments
     is_transition_in_loop = trans_from_event in vertex_in_loops and trans_from_event in in_transitions_loops
@@ -98,10 +99,7 @@ def get_place_from_transition(places_map, transition, vertex_in_loops, last_even
         are_both_in_loop = is_last_event_in_loop and trans_from_event in vertex_in_loops
         are_both_not_in_loop = not is_last_event_in_loop and not trans_from_event in vertex_in_loops
         for trans in places_map[place].keys():
-            #if transition in places_map[place][trans]:
-            #    breakpoint()
-            if transition in places_map[place][trans] and (are_both_in_loop or (not are_both_in_loop and place in in_places_loops) or are_both_not_in_loop or (is_last_event_in_loop and is_out_place)):
-                #breakpoint()
+            if transition in places_map[place][trans] and ((are_both_in_loop and place in vertex_in_loops) or (not are_both_in_loop and place in in_places_loops) or are_both_not_in_loop or (is_last_event_in_loop and is_out_place) or (not are_both_in_loop and not place in vertex_in_loops)):
                 places.append((place, trans))
     return places
 
