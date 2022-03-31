@@ -34,6 +34,7 @@ try:
 except:
     raise Exception("File not found")
 log = xes_importer.apply('data/log-{}.xes'.format(net_name))
+net, im, fm = pm4py.discover_petri_net_inductive(log)
 for trace in log:
     for event in trace:
         for attr in event.keys():
@@ -45,10 +46,12 @@ for trace in log:
                 except:
                     pass
 
+breakpoint()
 loop_vertex = detect_loops(net)
 in_places_loops = get_in_place_loop(net, loop_vertex)
 in_transitions_loop = list()        
 for place_name in in_places_loops:
+    breakpoint()
     place = [place_net for place_net in net.places if place_net.name == place_name]
     place = place[0]
     for out_arc in place.out_arcs:
@@ -67,6 +70,7 @@ for place in net.places:
         decision_points_data[place.name] = pd.DataFrame()
 
 # fill the data
+breakpoint()
 tic = time()
 attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean',
         'status': 'categorical', 'communication': 'categorical', 'discarded': 'boolean'}
