@@ -37,7 +37,7 @@ try:
 except:
     raise Exception("File not found")
 log = xes_importer.apply('data/log-{}.xes'.format(net_name))
-#net, im, fm = pm4py.discover_petri_net_inductive(log)
+net, im, fm = pm4py.discover_petri_net_inductive(log)
 for trace in log:
     for event in trace:
         for attr in event.keys():
@@ -62,15 +62,16 @@ for loop_length in loop_vertex.keys():
         loop_obj = Loop(loop, events_loop, net, "{}_{}".format(loop_length, i))
         loops.append(loop_obj)
 
-breakpoint()
+#breakpoint()
 for loop in loops:
     loop.set_nearest_input(net, loops)
     loop.set_dp_forward_order_transition(net)
     #breakpoint()
     loop.set_dp_backward_order_transition(net)
 # get the map of places and events
+#breakpoint()
 general_places_events_map = get_map_place_to_events(net, loops)
-breakpoint()
+#breakpoint()
 # get the map of transitions and events
 # get a dict of data for every decision point
 decision_points_data = dict()
@@ -79,7 +80,7 @@ for place in net.places:
         decision_points_data[place.name] = pd.DataFrame()
 
 # fill the data
-breakpoint()
+#breakpoint()
 tic = time()
 attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean',
         'status': 'categorical', 'communication': 'categorical', 'discarded': 'boolean'}
@@ -154,19 +155,25 @@ for trace in log:
             decision_points_data[place_from_event[0]] = pd.concat([decision_points_data[place_from_event[0]], new_row], ignore_index=True)
 
 
-breakpoint()
-
+#breakpoint()
+attributes_map = {'lifecycle.transition': 'categorical', 'expense': 'continuous', 
+        'totalPaymentAmount': 'continuous', 'paymentAmount': 'continuous', 'amount': 'continuous',
+        'org.resource': 'categorical', 'dismissal': 'categorical', 'vehicleClass': 'categorical',
+        'article': 'categorical', 'points': 'continuous', 'notificationType': 'categorical', 'lastSent': 'categorical'}
 for decision_point in decision_points_data.keys():
+    #breakpoint()
     print("")
     print(decision_point)
     dataset = decision_points_data[decision_point].fillna('?')
+    dataset.columns = dataset.columns.str.replace(':', '.')
+    
     feature_names = get_feature_names(dataset)
     dt = DecisionTree(attributes_map)
     dt.fit(dataset)
-    if decision_point == 'p_12':
-        breakpoint()
-    y_pred = dt.predict(dataset.drop(columns=['target']))
-    print("Train accuracy: {}".format(metrics.accuracy_score(dataset['target'], y_pred)))
-    print(dt.extract_rules())
+    #breakpoint()
+    if not len(dt.get_nodes()) == 1:
+        y_pred = dt.predict(dataset.drop(columns=['target']))
+        print("Train accuracy: {}".format(metrics.accuracy_score(dataset['target'], y_pred)))
+        print(dt.extract_rules())
 toc = time()
-print("Total time: {}".format(toc-tic))
+print("Total time: {} seconds".format(toc-tic))

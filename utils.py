@@ -561,21 +561,23 @@ def update_places_map_dp_list_if_looping(net, dp_list, places_map, loops, event_
                     loop_reachable = loop.dp_forward.copy()
                     for trans in places_map[dp].keys():
                         if loop.is_vertex_in_loop(trans):
-                            if event_sequence[-1] in loop.dp_forward[dp][trans]:
-                                if isinstance(places_map[dp][trans], set):
-                                    #breakpoint()
-                                    places_map[dp][trans] = places_map[dp][trans].difference(loop.events)
-                                    places_map[dp][trans] = places_map[dp][trans].union(loop_reachable[dp][trans])
+                            if trans in loop.dp_forward[dp].keys():
+                                if event_sequence[-1] in loop.dp_forward[dp][trans]:
+                                    if isinstance(places_map[dp][trans], set):
+                                        #breakpoint()
+                                        places_map[dp][trans] = places_map[dp][trans].difference(loop.events)
+                                        places_map[dp][trans] = places_map[dp][trans].union(loop_reachable[dp][trans])
                 for dp in loop.dp_backward.keys():
                     if not dp in dp_list:
                         dp_list.append(dp)
                     loop_reachable = loop.dp_backward.copy()
                     for trans in places_map[dp].keys():
                         if loop.is_vertex_in_loop(trans):
-                            if event_sequence[-1] in loop.dp_backward[dp][trans]:
-                                if isinstance(places_map[dp][trans], set):
-                                    places_map[dp][trans] = places_map[dp][trans].difference(loop.events)
-                                    places_map[dp][trans] = places_map[dp][trans].union(loop_reachable[dp][trans])
+                            if trans in loop.dp_backward[dp].keys():
+                                if event_sequence[-1] in loop.dp_backward[dp][trans]:
+                                    if isinstance(places_map[dp][trans], set):
+                                        places_map[dp][trans] = places_map[dp][trans].difference(loop.events)
+                                        places_map[dp][trans] = places_map[dp][trans].union(loop_reachable[dp][trans])
     return places_map, dp_list
         
 def update_dp_list(places_from_event, dp_list):
