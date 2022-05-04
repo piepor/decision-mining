@@ -29,7 +29,6 @@ argcomplete.autocomplete(parser)
 # parse arguments
 args = parser.parse_args()
 net_name = args.net_name
-k = 1
 
 try:
     #net, initial_marking, final_marking = pnml_importer.apply("models/{}.pnml".format(net_name))
@@ -51,10 +50,10 @@ for trace in log:
 
 trans_events_map = get_map_transitions_events(net)
 events_trans_map = get_map_events_transitions(net)
-#breakpoint()
+
 loop_vertex = detect_loops(net)
-#breakpoint()
 loop_vertex = delete_composite_loops(loop_vertex)
+
 loops = list()
 for loop_length in loop_vertex.keys():
     for i, loop in enumerate(loop_vertex[loop_length]):
@@ -62,118 +61,111 @@ for loop_length in loop_vertex.keys():
         loop_obj = Loop(loop, events_loop, net, "{}_{}".format(loop_length, i))
         loops.append(loop_obj)
 
-#breakpoint()
 for loop in loops:
     loop.set_nearest_input(net, loops)
     loop.set_dp_forward_order_transition(net)
-    #breakpoint()
     loop.set_dp_backward_order_transition(net)
-# get the map of places and events
-#breakpoint()
+
+# Get the map of places and events
 general_places_events_map = get_map_place_to_events(net, loops)
-#breakpoint()
-# get the map of transitions and events
-# get a dict of data for every decision point
+
+tic = time()
+
+# Dictionary of attributes data for every decision point, with a target key to be used later on
 decision_points_data = dict()
 for place in net.places:
     if len(place.out_arcs) >= 2:
-        decision_points_data[place.name] = pd.DataFrame()
+        decision_points_data[place.name] = {k: [] for k in ['target']}
 
-# fill the data
-#breakpoint()
-tic = time()
-attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean',
-        'status': 'categorical', 'communication': 'categorical', 'discarded': 'boolean'}
+event_attr = dict()
+
+# Scanning the log to get the data
 for trace in log:
-    #breakpoint()
     places_events_map = general_places_events_map.copy()
     dp_list = list(places_events_map.keys())
-    if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
-        trace_attr_row = trace.attributes
-        #trace_attr_row.pop('concept:name')
-    last_k_events = list()
     transition_sequence = list()
     event_sequence = list()
     number_of_loops = dict()
     for loop in loops:
         loop.set_inactive()
         number_of_loops[loop.name] = 0
-    #breakpoint()
+
+    # Keep the same attributes observed in the previous traces (to keep dictionaries at the same length)
+    event_attr = {k: [np.nan] for k in event_attr.keys()}
+    # Store the trace attributes (if any)
+    if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
+        event_attr.update(trace.attributes)
+    last_event_name = 'None'
+
     for event in trace:
         trans_from_event = trans_events_map[event["concept:name"]]
         transition_sequence.append(trans_from_event)
         event_sequence.append(event['concept:name'])
-        if len(last_k_events) == 0:
-            last_event_name = 'None'
-        else:
-            last_event_name = last_k_events[-1]['concept:name']
         last_event_trans = trans_events_map[last_event_name]
-        #breakpoint()
-        places_events_map, dp_list = update_places_map_dp_list_if_looping(
-                net, dp_list, places_events_map, loops, event_sequence, number_of_loops, trans_events_map)
+
+        places_events_map, dp_list = update_places_map_dp_list_if_looping(net, dp_list, places_events_map, loops, event_sequence, number_of_loops, trans_events_map)
         places_from_event = get_place_from_event(places_events_map, event['concept:name'], dp_list)
         dp_list = update_dp_list(places_from_event, dp_list)
-        #breakpoint()
-        if len(places_from_event) == 0:
-            last_k_events.append(event)
-            if len(last_k_events) > k:
-                last_k_events = last_k_events[-k:]
-            continue
+
         for place_from_event in places_from_event:
-            last_k_event_dict = dict()
-            for last_event in last_k_events:
-                event_attr = get_attributes_from_event(last_event)
-                event_attr.pop('time:timestamp')
-                last_k_event_dict.update(event_attr)
-            if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
-                last_k_event_dict.update(trace_attr_row)
-            last_k_event_dict.pop("concept:name")
-            new_row = pd.DataFrame.from_dict(last_k_event_dict)
-            new_row["target"] = place_from_event[1]
-            decision_points_data[place_from_event[0]] = pd.concat([decision_points_data[place_from_event[0]], new_row], ignore_index=True)
-        #breakpoint()
-        last_k_events.append(event)
-        if len(last_k_events) > k:
-            last_k_events = last_k_events[-k:]
+            # Append the last attribute values to the decision point dictionary
+            for a in event_attr.keys():
+                # If attribute is not present, and it is not nan, add it as a new key, filling previous entries with nan
+                if a not in decision_points_data[place_from_event[0]] and event_attr[a][0] is not np.nan:
+                    entries = len(decision_points_data[place_from_event[0]]['target'])
+                    decision_points_data[place_from_event[0]][a] = [np.nan] * entries
+                    decision_points_data[place_from_event[0]][a].append(event_attr[a][0])
+                # Else, if attribute is present, just append it to the existing list
+                elif a in decision_points_data[place_from_event[0]]:
+                    decision_points_data[place_from_event[0]][a].append(event_attr[a][0])
+            # Append also the target transition label to the decision point dictionary
+            decision_points_data[place_from_event[0]]['target'].append(place_from_event[1])
+
+        # Get the attribute values dictionary containing the current event values
+        event_attr.update(get_attributes_from_event(event))
+        [event_attr.pop(k) for k in ['time:timestamp', 'concept:name']]
+        # Update the last event name with the current event name
+        last_event_name = event['concept:name']
+
+    # Final update of the current trace (from last event to sink)
     transition = [trans for trans in net.transitions if trans.label == event['concept:name']][0]
-    #breakpoint()
+
     places_from_event = get_all_dp_from_event_to_sink(transition, loops, [])
-    #breakpoint()
+
     if len(places_from_event) > 0:
-        #breakpoint()
         for place_from_event in places_from_event:
-            last_k_event_dict = dict()
-            for last_event in last_k_events:
-                event_attr = get_attributes_from_event(last_event)
-                event_attr.pop('time:timestamp')
-                last_k_event_dict.update(event_attr)
-            if len(trace.attributes.keys()) > 1 and 'concept:name' in trace.attributes.keys():
-                last_k_event_dict.update(trace_attr_row)
-            last_k_event_dict.pop("concept:name")
-            new_row = pd.DataFrame.from_dict(last_k_event_dict)
-            new_row["target"] = place_from_event[1]
-            decision_points_data[place_from_event[0]] = pd.concat([decision_points_data[place_from_event[0]], new_row], ignore_index=True)
+            for a in event_attr.keys():
+                if a not in decision_points_data[place_from_event[0]] and event_attr[a][0] is not np.nan:
+                    entries = len(decision_points_data[place_from_event[0]]['target'])
+                    decision_points_data[place_from_event[0]][a] = [np.nan] * entries
+                    decision_points_data[place_from_event[0]][a].append(event_attr[a][0])
+                elif a in decision_points_data[place_from_event[0]]:
+                    decision_points_data[place_from_event[0]][a].append(event_attr[a][0])
+            decision_points_data[place_from_event[0]]['target'].append(place_from_event[1])
 
 
-#breakpoint()
-attributes_map = {'lifecycle.transition': 'categorical', 'expense': 'continuous', 
-        'totalPaymentAmount': 'continuous', 'paymentAmount': 'continuous', 'amount': 'continuous',
-        'org.resource': 'categorical', 'dismissal': 'categorical', 'vehicleClass': 'categorical',
-        'article': 'categorical', 'points': 'continuous', 'notificationType': 'categorical', 'lastSent': 'categorical'}
+attributes_map = {'lifecycle.transition': 'categorical', 'expense': 'continuous',
+                  'totalPaymentAmount': 'continuous', 'paymentAmount': 'continuous', 'amount': 'continuous',
+                  'org.resource': 'categorical', 'dismissal': 'categorical', 'vehicleClass': 'categorical',
+                  'article': 'categorical', 'points': 'continuous', 'notificationType': 'categorical',
+                  'lastSent': 'categorical'}
+
+attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean', 'status': 'categorical',
+                  'communication': 'categorical', 'discarded': 'boolean'}
+
+# For each decision point (with values for at least one attribute, apart from the 'target' attribute)
+# create a dataframe, fit a decision tree and print the extracted rules
 for decision_point in decision_points_data.keys():
-    #breakpoint()
-    print("")
-    print(decision_point)
-    dataset = decision_points_data[decision_point].fillna('?')
+    print("\n", decision_point)
+    dataset = pd.DataFrame.from_dict(decision_points_data[decision_point]).fillna('?')
     dataset.columns = dataset.columns.str.replace(':', '.')
-    
     feature_names = get_feature_names(dataset)
     dt = DecisionTree(attributes_map)
     dt.fit(dataset)
-    #breakpoint()
     if not len(dt.get_nodes()) == 1:
         y_pred = dt.predict(dataset.drop(columns=['target']))
         print("Train accuracy: {}".format(metrics.accuracy_score(dataset['target'], y_pred)))
         print(dt.extract_rules())
+
 toc = time()
-print("Total time: {} seconds".format(toc-tic))
+print("Total time: {}".format(toc-tic))
