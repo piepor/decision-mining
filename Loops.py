@@ -1,5 +1,5 @@
-from utils import get_in_place_loop, get_out_place_loop
-from utils import get_loop_not_silent, get_input_near_source
+from loop_utils import get_in_place_loop, get_out_place_loop
+from loop_utils import get_loop_not_silent, get_input_near_source
 
 
 class Loop(object):
@@ -67,7 +67,6 @@ class Loop(object):
                             dp_forward[place.name][out_arc.target.name] = not_silent
         self.dp_forward = dp_forward
 
-
     def get_next_not_silent_forward(self, place, not_silent) -> list:
         """ Recursively compute the first not silent transition connected to a place
 
@@ -82,7 +81,7 @@ class Loop(object):
         if place.name == 'sink':
             return not_silent
         is_input_a_skip = len(place.in_arcs) == 2 and len([arc.source.name for arc in place.in_arcs if arc.source.label is None]) == 1
-        if (len(place.in_arcs) > 1 and not (is_input_a_skip or self.is_vertex_input_loop(place.name))) or self.is_vertex_nearest_input(place.name): # or (is_output and loop_name == loop_name_start):
+        if (len(place.in_arcs) > 1 and not (is_input_a_skip or self.is_vertex_input_loop(place.name))) or self.is_vertex_nearest_input(place.name):
             return not_silent
         out_arcs_label = [arc.target.label for arc in place.out_arcs]
         # second stop condition
