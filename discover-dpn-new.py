@@ -39,8 +39,6 @@ net, im, fm = pm4py.discover_petri_net_inductive(log)
 for trace in log:
     for event in trace:
         for attr in event.keys():
-           # if attr == 'appeal':
-           #     breakpoint()
             if not isinstance(event[attr], bool):
                 try:
                     event[attr] = float(event[attr])

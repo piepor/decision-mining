@@ -280,8 +280,8 @@ def update_places_map_dp_list_if_looping(net, dp_list, places_map, loops, event_
     |                                              |
     ------------------- silent --------------------
     and the sequence is A - B - A, it means that the decision points to be added at the moment of the second A are:
-    - from the start to A (forward): dp0, dp1
-    - from A to the start (backward): dp2
+    - from A to the start (forward): dp2
+    - from the start to A (backward): dp0, dp1
     """
     transition_sequence = [trans_events_map[event] for event in event_sequence]
     loop_name = 'None'
