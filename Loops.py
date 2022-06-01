@@ -115,7 +115,7 @@ class Loop(object):
         For every decision point sets the not silent transitions reachable from the decision point
         to the nearest input node of the loop
         """
-        breakpoint()
+        #breakpoint()
         dp_forward = dict()
         places = [place.name for place in net.places]
         for vertex in self.vertex:

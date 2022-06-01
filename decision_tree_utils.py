@@ -1,11 +1,14 @@
 import numpy as np
+from copy import copy
 
-def extract_rule(node, rule) -> str:
-    """ Recursively adds rule for every node visited until the root is found """
-    if node.get_label() == 'root':
-        return rule
-    else:
-        return "{} && {}".format(node.get_label(), extract_rule(node.get_parent_node(), rule))
+def extract_rules_from_leaf(node):
+    """ Extract all the rules in the path from the leaf to the root """
+    rules = list()
+    current_node = copy(node)
+    while current_node.get_label() != 'root':
+        rules.append(current_node.get_label())
+        current_node = current_node.get_parent_node()
+    return rules
 
 def get_total_threshold(data, local_threshold) -> float:
     """ Computes the threshold on the total dataset

@@ -1,8 +1,9 @@
-from decision_tree_utils import class_entropy, get_split_gain, get_total_threshold, extract_rule
+from decision_tree_utils import class_entropy, get_split_gain, get_total_threshold, extract_rules_from_leaf
 from Nodes import DecisionNode, LeafNode
 from typing import Union
 import pandas as pd
 import numpy as np
+import scipy.stats as stats
 
 
 class DecisionTree(object):
@@ -296,21 +297,166 @@ class DecisionTree(object):
     def get_leaves_nodes(self):
         """ Returns a list of the leaves nodes """
         return [node for node in self._nodes if isinstance(node, LeafNode)]
-        
-    def extract_rules(self): 
-        """ Returns a dictionary containing rulws extracted from the tree, already in logical form """
-        rules = dict()
-        # starting from the leaves going back to the root
-        for leaf_node in self.get_leaves_nodes():
-            rule = ""
-            if not leaf_node._label_class in rules.keys():
-                rules[leaf_node._label_class] = list()
-            rule = "{} && {}".format(leaf_node.get_label(), extract_rule(leaf_node.get_parent_node(), rule))
-            rule = "&&".join(rule.split("&&")[:-1])
-            rules[leaf_node._label_class].append(rule)
-        for target_class in rules.keys():
-            rules[target_class] = "|| ".join(rules[target_class])
-        return rules
 
     def get_nodes(self):
         return self._nodes
+
+    def extract_rules(self, data_in) -> dict:
+        """ Extracts the rules from the tree, one for each target transition.
+
+        For each leaf node, takes the list of conditions from the root to the leaf, simplifies it if possible, and puts
+        them in conjunction, adding the resulting rule to the dictionary at the corresponding target class key.
+        Finally, all the rules related to different leaves with the same target class are put in disjunction.
+        """
+
+        # Starting with a p_value threshold for the Fisher's Exact Test (for rule pruning) of 0.01, create the rules
+        # dictionary. If for some target all the rules have been pruned, repeat the process increasing the threshold.
+        p_threshold = 0.01
+        keep_rule = list()
+        while p_threshold <= 1.0:
+            rules = dict()
+            for leaf_node in self.get_leaves_nodes():
+                vertical_rules = extract_rules_from_leaf(leaf_node)
+
+                # Simplify the list of rules, if possible (and if vertical_rules does not contain rules in keep_rule)
+                if not any([r in vertical_rules for r in keep_rule]):
+                    vertical_rules = self._simplify_rule(vertical_rules, leaf_node._label_class, p_threshold, data_in)
+
+                # Create the set corresponding to the target class in the rules dictionary, if not already present
+                if leaf_node._label_class not in rules.keys():
+                    rules[leaf_node._label_class] = set()
+
+                # If the resulting list is composed by at least one rule, put them in conjunction and add the result to
+                # the dictionary of rules, at the corresponding class label
+                if len(vertical_rules) > 0:
+                    vertical_rules = " && ".join(vertical_rules)
+                    rules[leaf_node._label_class].add(vertical_rules)
+
+            # Put the rules for the same target class in disjunction. If there are no rules for some target class (they
+            # have been pruned) then increase the threshold and repeat the process. Also, if two target transitions have
+            # the same rule (because the original vertical rule has been pruned "too much"), repeat the process but
+            # avoid simplifying the rule that originated the problem. Otherwise, return the dictionary.
+            empty_rule = False
+            for target_class in rules.keys():
+                if len(rules[target_class]) == 0:
+                    empty_rule = True
+                    break
+                else:
+                    rules[target_class] = " || ".join(rules[target_class])
+
+            if empty_rule:
+                # TODO maybe increase more each time? This is precise but it may take long since the cap is 1
+                keep_rule = list()
+                p_threshold = round(p_threshold + 0.01, 2)
+            elif len(rules.values()) != len(set(rules.values())):
+                keep_rule.extend([r for r in set(rules.values()) if list(rules.values()).count(r) > 1])
+            else:
+                break
+
+        return rules
+
+    def _simplify_rule(self, vertical_rules, leaf_class, p_threshold, data_in) -> list:
+        """ Simplifies the list of rules from the root to a leaf node.
+
+        Given the list of vertical rules for a leaf, i.e. the list of rules from the root to the leaf node,
+        drops the irrelevant rules recursively applying a Fisher's Exact Test and returns the remaining ones.
+        In principle, all the rules could be removed: in that case, the result would be an empty list.
+        Method taken from "Simplifying Decision Trees" by J.R. Quinlan (1986).
+        """
+
+        rules_candidates_remove = list()
+        # For every rule in vertical_rules, check if it could be removed from vertical_rules.
+        # This is true if the related p-value returned by the Fisher's Exact Test is higher than the threshold.
+        # Indeed, a rule is considered relevant for the classification only if the null hypothesis (i.e. the two
+        # variables - table rows and columns - are independent) can be rejected at the threshold*100% level or better.
+        for rule in vertical_rules:
+            other_rules = vertical_rules[:]
+            other_rules.remove(rule)
+            table = self._create_fisher_table(rule, other_rules, leaf_class, data_in)
+            (_, p_value) = stats.fisher_exact(table)
+            if p_value > p_threshold:
+                rules_candidates_remove.append((rule, p_value))
+
+        # Among the candidates rules, remove the one with the highest p-value (the most irrelevant)
+        if len(rules_candidates_remove) > 0:
+            max_p_value = rules_candidates_remove[0][1]
+            rule_to_remove = rules_candidates_remove[0][0]
+            for rule in rules_candidates_remove:
+                if rule[1] > max_p_value:
+                    max_p_value = rule[1]
+                    rule_to_remove = rule[0]
+            vertical_rules.remove(rule_to_remove)
+            # Then, recurse the process on the remaining rules
+            self._simplify_rule(vertical_rules, leaf_class, p_threshold, data_in)
+
+        return vertical_rules
+
+    def _create_fisher_table(self, rule, other_rules, leaf_class, data_in) -> pd.DataFrame:
+        """ Creates a 2x2 table to be used for the Fisher's Exact Test.
+
+        Given a rule from the list of rules from the root to the leaf node, the other rules from that list, the leaf
+        class and the training set, creates a 2x2 table containing the number of training examples that satisfy the
+        other rules divided according to the satisfaction of the excluded rule and the belonging to target class.
+        Missing values are not taken into account.
+        """
+
+        # Create a query string with all the rules in "other_rules" in conjunction (if there are other rules)
+        # Get the examples in the training set that satisfy all the rules in other_rules in conjunction
+        if len(other_rules) > 0:
+            query_other = ""
+            for r in other_rules:
+                r_attr, r_comp, r_value = r.split(' ')
+                query_other += r_attr
+                if r_comp == '=':
+                    query_other += ' == '
+                else:
+                    query_other += ' ' + r_comp + ' '
+                if data_in.dtypes[r_attr] in ['float64', 'bool']:
+                    query_other += r_value
+                else:
+                    query_other += '"' + r_value + '"'
+                if r != other_rules[-1]:
+                    query_other += ' & '
+            examples_satisfy_other = data_in.query(query_other)
+        else:
+            examples_satisfy_other = data_in.copy()
+
+        # Create a query with the excluded rule
+        rule_attr, rule_comp, rule_value = rule.split(' ')
+        query_rule = rule_attr
+        if rule_comp == '=':
+            query_rule += ' == '
+        else:
+            query_rule += ' ' + rule_comp + ' '
+        if data_in.dtypes[rule_attr] in ['float64', 'bool']:
+            query_rule += rule_value
+        else:
+            query_rule += '"' + rule_value + '"'
+
+        # Get the examples in the training set that satisfy the excluded rule
+        examples_satisfy_other_and_rule = examples_satisfy_other.query(query_rule)
+
+        # Get the examples in the training set that satisfy the other_rules in conjunction but not the excluded rule
+        examples_satisfy_other_but_not_rule = examples_satisfy_other[
+            ~examples_satisfy_other.apply(tuple, 1).isin(examples_satisfy_other_and_rule.apply(tuple, 1))]
+
+        # Create the table which contains, for every target class and the satisfaction of the excluded rule,
+        # the corresponding number of examples in the training set
+        table = {k1: {k2: 0 for k2 in [leaf_class, 'not '+leaf_class]} for k1 in ['satisfies rule', 'does not satisfy rule']}
+
+        count_other_and_rule = examples_satisfy_other_and_rule.groupby('target').count().iloc[:, 0]
+        count_other_but_not_rule = examples_satisfy_other_but_not_rule.groupby('target').count().iloc[:, 0]
+
+        for idx, value in count_other_and_rule.items():
+            if idx == leaf_class:
+                table['satisfies rule'][leaf_class] = value
+            else:
+                table['satisfies rule']['not '+leaf_class] = value
+        for idx, value in count_other_but_not_rule.items():
+            if idx == leaf_class:
+                table['does not satisfy rule'][leaf_class] = value
+            else:
+                table['does not satisfy rule']['not '+leaf_class] = value
+
+        table_df = pd.DataFrame.from_dict(table, orient='index')
+        return table_df

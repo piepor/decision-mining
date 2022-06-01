@@ -109,7 +109,7 @@ for loop_length in loop_vertex.keys():
         loops.append(loop_obj)
 
 not_joinable = False
-breakpoint()
+#breakpoint()
 while not not_joinable:
     #breakpoint()
     old_loops = copy.copy(loops)
@@ -139,7 +139,7 @@ while not not_joinable:
     if len(new_loop_nodes) == 0:
         not_joinable = True
             
-breakpoint()
+#breakpoint()
 for loop in loops:
     loop.set_nearest_input_complete_net(sim_net, loops)
 #    # TODO: these functions have problems with road traffice fine management process complete dataset
@@ -169,7 +169,7 @@ for place in net.places:
     if len(place.out_arcs) >= 2:
         decision_points_data[place.name] = {k: [] for k in ['target']}
 
-breakpoint()
+#breakpoint()
 event_attr = dict()
 
 # Scanning the log to get the data

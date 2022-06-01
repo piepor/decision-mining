@@ -3,6 +3,10 @@ import pandas as pd
 from sklearn.tree import export_text
 from pm4py.objects.petri_net.obj import PetriNet
 
+from DecisionTree import DecisionTree
+from decision_tree_utils import extract_rules_from_leaf
+
+
 def are_activities_parallel(first_activity, second_activity, parallel_branches) -> bool:
     """ Check if two activities are parallel in the net. 
 
@@ -65,7 +69,7 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
     otherwise if the two activities are in the same loop but 'current' is not reachable from 'previous' the algorithm chooses to remain in the
     loop (i.e. it goes back)
     """
-    breakpoint()
+    #breakpoint()
     for in_arc in current.in_arcs:
         # setting previous_reached to False because we want to explore ALL the possible paths
         previous_reached = False
@@ -166,7 +170,7 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
                         decision_points, not_found, previous_reached = get_dp_to_previous_event(previous, inner_in_arc.source, loops, common_loops, decision_points, reachability, passed_inv_act)
                         # add the silent transition to the alread seen list
                         passed_inv_act.add(inner_in_arc.source.name)
-                        breakpoint()
+                        #breakpoint()
                     elif inner_in_arc.source.name == previous:
                         previous_reached = True
                         if len(in_arc.source.out_arcs) > 1:
@@ -647,3 +651,97 @@ def get_previous(node):
     #breakpoint()
     previous = list(node.in_arcs)[0].source
     return previous
+
+
+def discover_overlapping_rules(base_tree, dataset, attributes_map, original_rules):
+    """ Discovers overlapping rules, if any.
+
+    Given the fitted decision tree, extracts the training set instances that have been wrongly classified, i.e., for
+    each leaf node, all those instances whose target is different from the leaf label. Then, it fits a new decision tree
+    on those instances, builds a rules dictionary as before (disjunctions of conjunctions) and puts the resulting rules
+    in disjunction with the original rules, according to the target value.
+    Method taken by "Decision Mining Revisited - Discovering Overlapping Rules" by Felix Mannhardt, Massimiliano de
+    Leoni, Hajo A. Reijers, Wil M.P. van der Aalst (2016).
+    """
+
+    leaf_nodes = base_tree.get_leaves_nodes()
+    leaf_nodes_with_wrong_instances = [ln for ln in leaf_nodes if len(ln.get_class_names()) > 1]
+
+    for leaf_node in leaf_nodes_with_wrong_instances:
+        vertical_rules = extract_rules_from_leaf(leaf_node)
+
+        vertical_rules_query = ""
+        for r in vertical_rules:
+            r_attr, r_comp, r_value = r.split(' ')
+            vertical_rules_query += r_attr
+            if r_comp == '=':
+                vertical_rules_query += ' == '
+            else:
+                vertical_rules_query += ' ' + r_comp + ' '
+            if dataset.dtypes[r_attr] == 'float64' or dataset.dtypes[r_attr] == 'bool':
+                vertical_rules_query += r_value
+            else:
+                vertical_rules_query += '"' + r_value + '"'
+            if r != vertical_rules[-1]:
+                vertical_rules_query += ' & '
+
+        leaf_instances = dataset.query(vertical_rules_query)
+        # TODO not considering missing values for now, so wrong_instances could be empty
+        # This happens because all the wrongly classified instances have missing values for the query attribute(s)
+        wrong_instances = leaf_instances[leaf_instances['target'] != leaf_node._label_class]
+
+        sub_tree = DecisionTree(attributes_map)
+        sub_tree.fit(wrong_instances)
+
+        sub_leaf_nodes = sub_tree.get_leaves_nodes()
+        if len(sub_leaf_nodes) > 1:
+            sub_rules = {}
+            for sub_leaf_node in sub_leaf_nodes:
+                new_rule = ' && '.join(vertical_rules + [extract_rules_from_leaf(sub_leaf_node)])
+                if sub_leaf_node._label_class not in sub_rules.keys():
+                    sub_rules[sub_leaf_node._label_class] = set()
+                sub_rules[sub_leaf_node._label_class].add(new_rule)
+            for sub_target_class in sub_rules.keys():
+                sub_rules[sub_target_class] = ' || '.join(sub_rules[sub_target_class])
+                original_rules[sub_target_class] += ' || ' + sub_rules[sub_target_class]
+        # Only root in sub_tree = could not find a suitable split of the root node -> most frequent target is chosen
+        elif len(wrong_instances) > 0:  # length 0 could happen since we do not consider missing values for now
+            sub_target_class = wrong_instances['target'].mode()[0]
+            if sub_target_class not in original_rules.keys():
+                original_rules[sub_target_class] = ' && '.join(vertical_rules)
+            else:
+                original_rules[sub_target_class] += ' || ' + ' && '.join(vertical_rules)
+
+    return original_rules
+
+
+def compress_many_valued_attributes(rules, attributes_map):
+    """ Rewrites the final rules dictionary to compress disjunctions of many-valued categorical attributes equalities
+
+    For example, a series of atoms "org:resource = 10 || org:resource = 144 || org:resource = 68 || org:resource = 43 ||
+    org:resource == 632" is rewritten as "org:resource one of [10, 144, 68, 43, 632]"
+    """
+
+    for target_class in rules.keys():
+        atoms = rules[target_class].split(' || ')
+        atoms_to_remove = dict()
+        cat_atoms_same_attr = dict()
+        for atom in atoms:
+            if ' && ' not in atom:
+                a_attr, a_comp, a_value = atom.split(' ')
+                if a_comp == '=' and attributes_map[a_attr] == 'categorical':
+                    if a_attr not in cat_atoms_same_attr.keys():
+                        cat_atoms_same_attr[a_attr] = list()
+                        atoms_to_remove[a_attr] = list()
+                    cat_atoms_same_attr[a_attr].append(a_value)
+                    atoms_to_remove[a_attr].append(atom)
+
+        compressed_rules = list()
+        for attr in cat_atoms_same_attr:
+            if len(cat_atoms_same_attr[attr]) > 1:
+                compressed_rules.append(attr + ' one of [' + ', '.join(sorted(cat_atoms_same_attr[attr])) + ']')
+                atoms = [a for a in atoms if a not in atoms_to_remove[attr]]
+
+        rules[target_class] = ' || '.join(atoms + compressed_rules)
+
+    return rules

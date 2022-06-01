@@ -17,7 +17,8 @@ from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from loop_utils import detect_loops, get_in_place_loop, get_out_place_loop
 from loop_utils import simplify_net, delete_composite_loops, get_input_near_source
-from utils import get_next_not_silent, get_map_place_to_events, get_place_from_event
+from utils import get_next_not_silent, get_map_place_to_events, get_place_from_event, compress_many_valued_attributes, \
+    discover_overlapping_rules
 from utils import get_attributes_from_event, get_feature_names, update_places_map_dp_list_if_looping
 from utils import extract_rules, get_map_transitions_events, get_decision_points_and_targets
 from utils import get_map_events_transitions, update_dp_list, get_all_dp_from_event_to_sink
@@ -179,7 +180,7 @@ for variant in tqdm(variants):
                         print("   - {}".format(events_trans_map[inn_key]))
                     else:
                         print("   - {}".format(inn_key))
-            breakpoint()
+            #breakpoint()
         dp_events_sequence['Event_{}'.format(i+1)] = dp_dict
     # Final update of the current trace (from last event to sink)
     transition = [trans for trans in net.transitions if trans.label == event_name][0]
@@ -252,19 +253,38 @@ for variant in tqdm(variants):
 attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean', 'status': 'categorical',
                   'communication': 'categorical', 'discarded': 'boolean'}
 
-# For each decision point (with values for at least one attribute, apart from the 'target' attribute)
-# create a dataframe, fit a decision tree and print the extracted rules
+# For each decision point, create a dataframe, fit a decision tree and print the extracted rules
+
 for decision_point in decision_points_data.keys():
     print("\n", decision_point)
-    dataset = pd.DataFrame.from_dict(decision_points_data[decision_point]).fillna('?')
-    dataset.columns = dataset.columns.str.replace(':', '.')
-    feature_names = get_feature_names(dataset)
+    dataset = pd.DataFrame.from_dict(decision_points_data[decision_point])
+
+    # Replacing ':' with '_' both in the dataset columns and in the attributes map since ':' creates problems
+    dataset.columns = dataset.columns.str.replace(':', '_')
+    attributes_map = {k.replace(':', '_'): attributes_map[k] for k in attributes_map}
+
+    # TODO this conversion of the dataset should be done only once here: check if it is done in other places
+    for attr in dataset.columns:
+        if attr != 'target':
+            if attributes_map[attr] == 'continuous':
+                dataset[attr] = dataset[attr].astype(float)
+            elif attributes_map[attr] == 'boolean':
+                dataset[attr] = dataset[attr].astype(bool)
+            elif attributes_map[attr] == 'categorical':
+                dataset[attr] = dataset[attr].astype(pd.StringDtype())
+
     dt = DecisionTree(attributes_map)
     dt.fit(dataset)
+
     if not len(dt.get_nodes()) == 1:
         y_pred = dt.predict(dataset.drop(columns=['target']))
         print("Train accuracy: {}".format(metrics.accuracy_score(dataset['target'], y_pred)))
-        print(dt.extract_rules())
+        rules = dt.extract_rules(dataset)
+        rules = discover_overlapping_rules(dt, dataset, attributes_map, rules)
+        rules = compress_many_valued_attributes(rules, attributes_map)
+        rules = {k: rules[k].replace('_', ':') for k in rules}
+        print(rules)
 
 toc = time()
 print("Total time: {}".format(toc-tic))
+
