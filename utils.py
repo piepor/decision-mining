@@ -30,6 +30,8 @@ def get_decision_points_and_targets(sequence, loops, net, parallel_branches) -> 
     """
     # search the first not parallel activity before the last in the sequence
     #breakpoint()
+    if sequence[-1] == 'b4a1000-f64e-4a67-b36b-9dadc6e35f6e' and sequence[-2] == 'c2c6c50f-3558-412c-af79-2bed4acddfcc':
+        breakpoint()
     current_act_name = sequence[-1]
     previous_sequence = sequence[:-1]
     previous_sequence.reverse()
@@ -69,7 +71,10 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
     otherwise if the two activities are in the same loop but 'current' is not reachable from 'previous' the algorithm chooses to remain in the
     loop (i.e. it goes back)
     """
-    #breakpoint()
+    if current.label == 'Payment':
+        breakpoint()
+    if previous == 'c2c6c50f-3558-412c-af79-2bed4acddfcc':
+        breakpoint()
     for in_arc in current.in_arcs:
         # setting previous_reached to False because we want to explore ALL the possible paths
         previous_reached = False
@@ -143,12 +148,14 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
                                     decision_points[in_arc.source.name] = {current.name}
                         elif inner_in_arc.source.name in passed_inv_act.keys():
                             if passed_inv_act[inner_in_arc.source.name]['previous_reached']:
+                                # TODO previous_reached = True?
                                 if len(in_arc.source.out_arcs) > 1:
                                     if in_arc.source.name in decision_points.keys():
                                         # using set ecause it is possible to pass multiple time through the same decision point
                                         decision_points[in_arc.source.name].add(current.name)
                                     else:
                                         decision_points[in_arc.source.name] = {current.name}
+                                previous_reached = True
                             elif passed_inv_act[inner_in_arc.source.name]['not_found']:
                                 not_found = True
                         elif not inner_in_arc.source.label is None:
@@ -190,7 +197,7 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
             for inner_in_arc in in_arc.source.in_arcs:
                 if inner_in_arc.source.name in passed_inv_act.keys():
                     if passed_inv_act[inner_in_arc.source.name]['previous_reached']:
-                        previouse_reched = True
+                        previous_reached = True
                         not_found = False
         # if previous in the inputs, stop
         elif previous in inner_in_arcs_names:
@@ -210,7 +217,7 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
     for in_arc in current.in_arcs:
         if in_arc.source.name in passed_inv_act.keys():
             if passed_inv_act[in_arc.source.name]['previous_reached']:
-                previouse_reched = True
+                previous_reached = True
                 not_found = False
     return decision_points, not_found, previous_reached
 
