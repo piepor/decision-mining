@@ -180,7 +180,7 @@ for variant in tqdm(variants):
                         print("   - {}".format(events_trans_map[inn_key]))
                     else:
                         print("   - {}".format(inn_key))
-            #breakpoint()
+            breakpoint()
         dp_events_sequence['Event_{}'.format(i+1)] = dp_dict
     # Final update of the current trace (from last event to sink)
     transition = [trans for trans in net.transitions if trans.label == event_name][0]

@@ -30,7 +30,7 @@ def get_decision_points_and_targets(sequence, loops, net, parallel_branches) -> 
     """
     # search the first not parallel activity before the last in the sequence
     #breakpoint()
-    if sequence[-1] == 'b4a1000-f64e-4a67-b36b-9dadc6e35f6e' and sequence[-2] == 'c2c6c50f-3558-412c-af79-2bed4acddfcc':
+    if sequence[-1] == '74b4ff4d-4e26-46c9-ae5b-ddc637052037' and sequence[-2] == '041e98fe-30ed-4544-b2ae-8504adce78d':
         breakpoint()
     current_act_name = sequence[-1]
     previous_sequence = sequence[:-1]
@@ -71,11 +71,11 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
     otherwise if the two activities are in the same loop but 'current' is not reachable from 'previous' the algorithm chooses to remain in the
     loop (i.e. it goes back)
     """
-    if current.label == 'Payment':
-        breakpoint()
-    if previous == 'c2c6c50f-3558-412c-af79-2bed4acddfcc':
-        breakpoint()
+    #print(current.in_arcs)
+    #breakpoint()
     for in_arc in current.in_arcs:
+        #print(in_arc)
+        #breakpoint()
         # setting previous_reached to False because we want to explore ALL the possible paths
         previous_reached = False
         not_found = False
@@ -213,6 +213,9 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
             if in_arc.source.name in decision_points.keys():
                 if current.name in decision_points[in_arc.source.name] and current.label is None: 
                     decision_points[in_arc.source.name].remove(current.name)
+        # stop if we find the target in one of the places going into a transition (they are parallel branches)
+        if previous_reached:
+            break
                 
     for in_arc in current.in_arcs:
         if in_arc.source.name in passed_inv_act.keys():
