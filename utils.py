@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import ast
 import pandas as pd
 from sklearn.tree import export_text
 from pm4py.objects.petri_net.obj import PetriNet
@@ -30,8 +32,8 @@ def get_decision_points_and_targets(sequence, loops, net, parallel_branches) -> 
     """
     # search the first not parallel activity before the last in the sequence
     #breakpoint()
-    if sequence[-1] == '74b4ff4d-4e26-46c9-ae5b-ddc637052037' and sequence[-2] == '041e98fe-30ed-4544-b2ae-8504adce78d':
-        breakpoint()
+#    if sequence[-1] == '74b4ff4d-4e26-46c9-ae5b-ddc637052037' and sequence[-2] == '041e98fe-30ed-4544-b2ae-8504adce78d':
+#        breakpoint()
     current_act_name = sequence[-1]
     previous_sequence = sequence[:-1]
     previous_sequence.reverse()
@@ -49,6 +51,17 @@ def get_decision_points_and_targets(sequence, loops, net, parallel_branches) -> 
     #breakpoint()
     current_act = [trans for trans in net.transitions if trans.name == current_act_name][0]
     previous_act = [trans for trans in net.transitions if trans.name == previous_act_name][0]
+    if 'set-prev-curr.txt' in os.listdir():
+        with open('set-prev-curr.txt', 'r') as f:
+            set_prev_curr = ast.literal_eval(f.read())
+    else:
+        set_prev_curr = set()
+    if not (previous_act.label, current_act.label) in set_prev_curr:
+        print("Previous event: {}".format(previous_act.label))
+        print("Current event: {}".format(current_act.label))
+        set_prev_curr.add((previous_act.label, current_act.label))
+        with open('set-prev-curr.txt', 'w') as f:
+            f.write(str(set_prev_curr))
     loops_selected = list()
     reachability = dict()
     # check if the two activities are contained in the same loop and save it if exists
@@ -74,6 +87,8 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
     #print(current.in_arcs)
     #breakpoint()
     for in_arc in current.in_arcs:
+#        if current.name == 'tauJoin_14':
+#            breakpoint()
         #print(in_arc)
         #breakpoint()
         # setting previous_reached to False because we want to explore ALL the possible paths
@@ -214,12 +229,18 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
                 if current.name in decision_points[in_arc.source.name] and current.label is None: 
                     decision_points[in_arc.source.name].remove(current.name)
         # stop if we find the target in one of the places going into a transition (they are parallel branches)
-        if previous_reached:
-            break
+        #if previous_reached:
+        #    break
                 
     for in_arc in current.in_arcs:
-        if in_arc.source.name in passed_inv_act.keys():
-            if passed_inv_act[in_arc.source.name]['previous_reached']:
+#        if current.name == 'tauJoin_14':
+#            breakpoint()
+        for inner_in_arc in in_arc.source.in_arcs:
+            if inner_in_arc.source.name in passed_inv_act.keys():
+                if passed_inv_act[inner_in_arc.source.name]['previous_reached']:
+                    previous_reached = True
+                    not_found = False
+            elif inner_in_arc.source.name == previous:
                 previous_reached = True
                 not_found = False
     return decision_points, not_found, previous_reached

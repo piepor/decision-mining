@@ -1,5 +1,6 @@
 import pm4py
 import os
+import ast
 from time import time
 from tqdm import tqdm
 import numpy as np
@@ -162,6 +163,7 @@ print('Extracting training data from Event Log')
 #for trace in tqdm(log):
 variants = variants_filter.get_variants(log)
 # searching only the variants
+set_last_to_end = set()
 for variant in tqdm(variants):
     transitions_sequence = list()
     events_sequence = list()
@@ -172,28 +174,50 @@ for variant in tqdm(variants):
         events_sequence.append(event_name)
         dp_dict = dict()
         if len(transitions_sequence) > 1:
+            if 'set-prev-curr.txt' in os.listdir():
+                with open('set-prev-curr.txt', 'r') as f:
+                    set_prev_curr_before = ast.literal_eval(f.read())
+            else:
+                set_prev_curr_before = set()
             dp_dict = get_decision_points_and_targets(transitions_sequence, loops, net, parallel_branches)
         old_keys = list(dp_dict.keys()).copy()
         for dp in old_keys:
             if len(dp_dict[dp]) == 0:
                 del dp_dict[dp]
         if len(transitions_sequence) > 1:
-            print("Previous event: {}".format(events_sequence[-2]))
-            print("Current event: {}".format(events_sequence[-1]))
-            print("DPs")
-            for key in dp_dict.keys():
-                print(" - {}".format(key))
-                for inn_key in dp_dict[key]:
-                    if inn_key in events_trans_map.keys():
-                        print("   - {}".format(events_trans_map[inn_key]))
-                    else:
-                        print("   - {}".format(inn_key))
-            breakpoint()
+#            print("Previous event: {}".format(events_sequence[-2]))
+#            print("Current event: {}".format(events_sequence[-1]))
+            
+            if 'set-prev-curr.txt' in os.listdir():
+                with open('set-prev-curr.txt', 'r') as f:
+                    set_prev_curr_after = ast.literal_eval(f.read())
+            else:
+                set_prev_curr_after = set()
+            if len(set_prev_curr_after) > len(set_prev_curr_before): 
+                print("DPs")
+                for key in dp_dict.keys():
+                    print(" - {}".format(key))
+                    for inn_key in dp_dict[key]:
+                        if inn_key in events_trans_map.keys():
+                            print("   - {}".format(events_trans_map[inn_key]))
+                        else:
+                            print("   - {}".format(inn_key))
+                breakpoint()
         dp_events_sequence['Event_{}'.format(i+1)] = dp_dict
     # Final update of the current trace (from last event to sink)
     transition = [trans for trans in net.transitions if trans.label == event_name][0]
-
     places_from_event = get_all_dp_from_event_to_sink(transition, loops, dict(), set())
+    if not event_name in set_last_to_end:
+        set_last_to_end.add(event_name)
+        print(f"{event_name}: DPs")
+        for key in places_from_event.keys():
+            print(" - {}".format(key))
+            for inn_key in places_from_event[key]:
+                if inn_key in events_trans_map.keys():
+                    print("   - {}".format(events_trans_map[inn_key]))
+                else:
+                    print("   - {}".format(inn_key))
+        breakpoint()
     dp_events_sequence['End'] = places_from_event
     transition_sequence = list()
     event_sequence = list()
@@ -251,7 +275,7 @@ for variant in tqdm(variants):
                             decision_points_data[place_from_event][a].append(event_attr[a][0])
                     decision_points_data[place_from_event]['target'].append(target_act)
 
-#breakpoint()
+breakpoint()
 #attributes_map = {'lifecycle.transition': 'categorical', 'expense': 'continuous',
 #                  'totalPaymentAmount': 'continuous', 'paymentAmount': 'continuous', 'amount': 'continuous',
 #                  'org.resource': 'categorical', 'dismissal': 'categorical', 'vehicleClass': 'categorical',
