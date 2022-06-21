@@ -269,8 +269,8 @@ for trace in tqdm(log):
 #                  'article': 'categorical', 'points': 'continuous', 'notificationType': 'categorical',
 #                  'lastSent': 'categorical', 'matricola': 'categorical'}
 
-#attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean', 'status': 'categorical',
-#                  'communication': 'categorical', 'discarded': 'boolean'}
+attributes_map = {'amount': 'continuous', 'policyType': 'categorical', 'appeal': 'boolean', 'status': 'categorical',
+                  'communication': 'categorical', 'discarded': 'boolean'}
 
 # For each decision point (with values for at least one attribute, apart from the 'target' attribute)
 # create a dataframe, fit a decision tree and print the extracted rules

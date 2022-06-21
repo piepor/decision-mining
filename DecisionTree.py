@@ -4,10 +4,14 @@ from typing import Union
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
+from operator import itemgetter
+from tqdm import tqdm
+import multiprocessing
 
 
 class DecisionTree(object):
     """ Implements a decision tree with C4.5 algorithm """
+
     def __init__(self, attributes_map, max_depth=20):
         self._nodes = set()
         self._root_node = None
@@ -165,7 +169,7 @@ class DecisionTree(object):
                 max_gain_ratio = select_max_gain_ratio.loc[max_gain_ratio_idx, 'gain_ratio']
                 max_gain_ratio_threshold = select_max_gain_ratio.loc[max_gain_ratio_idx, 'threshold']
                 split_attribute = select_max_gain_ratio.loc[max_gain_ratio_idx, 'attribute']
-            elif len(tests_examined[tests_examined['not_near_trivial_subset'] == True]) != 0:
+            elif len(tests_examined[tests_examined['not_near_trivial_subset']]) != 0:
                 max_gain_ratio_idx = select_max_gain_ratio['gain_ratio'].idxmax()
                 max_gain_ratio = select_max_gain_ratio.loc[max_gain_ratio_idx, 'gain_ratio']
                 max_gain_ratio_threshold = select_max_gain_ratio.loc[max_gain_ratio_idx, 'threshold']
@@ -191,7 +195,7 @@ class DecisionTree(object):
         # compute error predicting the most frequent class without splitting
         node_errors = data_in['target'].value_counts().sum() - data_in['target'].value_counts().max()
         # if split attribute does not exist then is a leaf 
-        if not split_attribute is None and node.get_level() < self.max_depth:
+        if split_attribute is not None and node.get_level() < self.max_depth:
             child_errors = self.compute_split_error(data_in[[split_attribute, 'target']], local_threshold)
             # if child errors are greater the actual error of the node than the split is useless
             if child_errors >= node_errors:
@@ -308,7 +312,30 @@ class DecisionTree(object):
     def get_nodes(self):
         return self._nodes
 
-    def extract_rules(self, data_in) -> dict:
+    def extract_rules(self) -> dict:
+        """ Extracts the rules from the tree, one for each target transition.
+
+        For each leaf node, puts in conjunction all the conditions in the path from the root to the leaf node.
+        Then, for each target class, put the conjunctive rules in disjunction.
+        """
+
+        rules = dict()
+        leaf_nodes = self.get_leaves_nodes()
+        for leaf_node in leaf_nodes:
+            vertical_rules = extract_rules_from_leaf(leaf_node)
+
+            vertical_rules = ' && '.join(vertical_rules)
+
+            if leaf_node._label_class not in rules.keys():
+                rules[leaf_node._label_class] = set()
+            rules[leaf_node._label_class].add(vertical_rules)
+
+        for target_class in rules.keys():
+            rules[target_class] = ' || '.join(rules[target_class])
+
+        return rules
+
+    def extract_rules_with_pruning(self, data_in) -> dict:
         """ Extracts the rules from the tree, one for each target transition.
 
         For each leaf node, takes the list of conditions from the root to the leaf, simplifies it if possible, and puts
@@ -319,30 +346,29 @@ class DecisionTree(object):
         # Starting with a p_value threshold for the Fisher's Exact Test (for rule pruning) of 0.01, create the rules
         # dictionary. If for some target all the rules have been pruned, repeat the process increasing the threshold.
         p_threshold = 0.01
-        keep_rule = list()
+        keep_rule = set()
         while p_threshold <= 1.0:
             rules = dict()
-            for leaf_node in self.get_leaves_nodes():
-                vertical_rules = extract_rules_from_leaf(leaf_node)
 
-                # Simplify the list of rules, if possible (and if vertical_rules does not contain rules in keep_rule)
-                if not any([r in vertical_rules for r in keep_rule]):
-                    vertical_rules = self._simplify_rule(vertical_rules, leaf_node._label_class, p_threshold, data_in)
+            leaves = self.get_leaves_nodes()
+            inputs = [(leaf, keep_rule, p_threshold, data_in) for leaf in leaves]
+            print("Starting multiprocessing rules pruning on {} leaves...".format(str(len(leaves))))
+            with multiprocessing.Pool() as pool:
+                result = list(tqdm(pool.imap(self._simplify_rule_multiprocess, inputs), total=len(leaves)))
 
+            for (vertical_rules, leaf_class) in result:
                 # Create the set corresponding to the target class in the rules dictionary, if not already present
-                if leaf_node._label_class not in rules.keys():
-                    rules[leaf_node._label_class] = set()
+                if leaf_class not in rules.keys():
+                    rules[leaf_class] = set()
 
                 # If the resulting list is composed by at least one rule, put them in conjunction and add the result to
                 # the dictionary of rules, at the corresponding class label
                 if len(vertical_rules) > 0:
                     vertical_rules = " && ".join(vertical_rules)
-                    rules[leaf_node._label_class].add(vertical_rules)
+                    rules[leaf_class].add(vertical_rules)
 
             # Put the rules for the same target class in disjunction. If there are no rules for some target class (they
-            # have been pruned) then increase the threshold and repeat the process. Also, if two target transitions have
-            # the same rule (because the original vertical rule has been pruned "too much"), repeat the process but
-            # avoid simplifying the rule that originated the problem. Otherwise, return the dictionary.
+            # have been pruned) then set the 'empty_rule' variable to True.
             empty_rule = False
             for target_class in rules.keys():
                 if len(rules[target_class]) == 0:
@@ -351,16 +377,37 @@ class DecisionTree(object):
                 else:
                     rules[target_class] = " || ".join(rules[target_class])
 
+            # If 'empty_rule' is True, then increase the threshold and repeat the process. Otherwise, if two target
+            # transitions have the same rule (because the original vertical rule has been pruned "too much"), repeat the
+            # process but avoid simplifying the rule that originated the problem. This is done only if the 'new' rules
+            # to be avoided are not all already present in 'keep_rule', otherwise it means that the process is looping.
+            # If that happens, simply increase the threshold and repeat the process.
+            # Otherwise, return the dictionary.
             if empty_rule:
                 # TODO maybe increase more each time? This is precise but it may take long since the cap is 1
-                keep_rule = list()
+                keep_rule = set()
                 p_threshold = round(p_threshold + 0.01, 2)
             elif len(rules.values()) != len(set(rules.values())):
-                keep_rule.extend([r for r in set(rules.values()) if list(rules.values()).count(r) > 1])
+                rules_to_add = [r for r in set(rules.values()) if list(rules.values()).count(r) > 1]
+                if not all([r in keep_rule for r in rules_to_add]):
+                    keep_rule.update(rules_to_add)
+                else:
+                    keep_rule = set()
+                    p_threshold = round(p_threshold + 0.01, 2)
             else:
                 break
 
         return rules
+
+    def _simplify_rule_multiprocess(self, input):
+        leaf_node, kr, p_threshold, data_in = input
+        vertical_rules = extract_rules_from_leaf(leaf_node)
+
+        # Simplify the list of rules, if possible (and if vertical_rules does not contain rules in keep_rule)
+        if not any([r in vertical_rules for r in kr]):
+            vertical_rules = self._simplify_rule(vertical_rules, leaf_node._label_class, p_threshold, data_in)
+
+        return vertical_rules, leaf_node._label_class
 
     def _simplify_rule(self, vertical_rules, leaf_class, p_threshold, data_in) -> list:
         """ Simplifies the list of rules from the root to a leaf node.
@@ -386,12 +433,7 @@ class DecisionTree(object):
 
         # Among the candidates rules, remove the one with the highest p-value (the most irrelevant)
         if len(rules_candidates_remove) > 0:
-            max_p_value = rules_candidates_remove[0][1]
-            rule_to_remove = rules_candidates_remove[0][0]
-            for rule in rules_candidates_remove:
-                if rule[1] > max_p_value:
-                    max_p_value = rule[1]
-                    rule_to_remove = rule[0]
+            rule_to_remove = max(rules_candidates_remove, key=itemgetter(1))[0]
             vertical_rules.remove(rule_to_remove)
             # Then, recurse the process on the remaining rules
             self._simplify_rule(vertical_rules, leaf_class, p_threshold, data_in)

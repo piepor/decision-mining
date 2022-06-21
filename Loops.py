@@ -1,5 +1,5 @@
-from loop_utils import get_in_place_loop, get_out_place_loop
-from loop_utils import get_loop_not_silent, get_input_near_source
+from loop_utils import get_in_place_loop, get_out_place_loop, count_lengths_from_source
+from loop_utils import get_loop_not_silent
 from utils import check_if_skip
 
 
@@ -103,11 +103,20 @@ class Loop(object):
 
     def set_nearest_input(self, net, loops):
         """ Sets the nearest input to the net source """
-        self.nearest = get_input_near_source(net, self.input_places.copy(), loops)
+        self.nearest = count_length_from_source(net, self.input_places.copy(), loops)
 
-    def set_nearest_input_complete_net(self, net, loops):
-        """ Sets the nearest input to the net source """
-        self.nearest_complete_net = get_input_near_source(net, self.input_places_complete.copy(), loops)
+    def set_nearest_input_complete_net(self, sim_net, sim_map):
+        """ Sets the nearest loop input to the net source """
+
+        if len(self.input_places_complete) > 1:
+            source = [place for place in sim_net.places if place.name == 'source'][0]
+            lengths = dict()
+            for input_place_name in self.input_places_complete:
+                lengths[input_place_name] = count_lengths_from_source(source, input_place_name, sim_map)
+            min_length = min(len(lengths[k]) for k in lengths)
+            self.nearest_complete_net = [k for k, l in lengths.items() if len(l) == min_length][0]
+        else:
+            self.nearest_complete_net = self.input_places_complete[0]
 
     def set_dp_forward_order_transition(self, net):
         """ Sets the forward path not silent transitions

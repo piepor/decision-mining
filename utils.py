@@ -1,6 +1,6 @@
+import copy
+
 import numpy as np
-import os
-import ast
 import pandas as pd
 from sklearn.tree import export_text
 from pm4py.objects.petri_net.obj import PetriNet
@@ -10,7 +10,7 @@ from decision_tree_utils import extract_rules_from_leaf
 
 
 def are_activities_parallel(first_activity, second_activity, parallel_branches) -> bool:
-    """ Check if two activities are parallel in the net. 
+    """ Check if two activities are parallel in the net.
 
     The dictionary 'parallel_branches' is derived from the net simplification algorithm."""
     are_parallel = False
@@ -23,17 +23,16 @@ def are_activities_parallel(first_activity, second_activity, parallel_branches) 
                             are_parallel = True
     return are_parallel
 
-def get_decision_points_and_targets(sequence, loops, net, parallel_branches) -> dict: 
-    """ Returns a dictionsy containing decision points and their targets.
 
-    Starting from the last activity in the sequence, the algorithm selects the previous not 
+def get_decision_points_and_targets(sequence, loops, net, parallel_branches, stored_dicts) -> [dict, dict]:
+    """ Returns a dictionary containing decision points and their targets.
+
+    Starting from the last activity in the sequence, the algorithm selects the previous not
     parallel activity. Exploring the net backward, it returns all the decision points with their targets
     encountered on the path leading to the last activity in the sequence.
     """
+
     # search the first not parallel activity before the last in the sequence
-    #breakpoint()
-#    if sequence[-1] == '74b4ff4d-4e26-46c9-ae5b-ddc637052037' and sequence[-2] == '041e98fe-30ed-4544-b2ae-8504adce78d':
-#        breakpoint()
     current_act_name = sequence[-1]
     previous_sequence = sequence[:-1]
     previous_sequence.reverse()
@@ -48,38 +47,180 @@ def get_decision_points_and_targets(sequence, loops, net, parallel_branches) -> 
     if previous_act_name is None:
         raise Exception("Can't find the previous not parallel activity")
     # keep the transition objects
-    #breakpoint()
     current_act = [trans for trans in net.transitions if trans.name == current_act_name][0]
     previous_act = [trans for trans in net.transitions if trans.name == previous_act_name][0]
-    if 'set-prev-curr.txt' in os.listdir():
-        with open('set-prev-curr.txt', 'r') as f:
-            set_prev_curr = ast.literal_eval(f.read())
-    else:
-        set_prev_curr = set()
-    if not (previous_act.label, current_act.label) in set_prev_curr:
-        print("Previous event: {}".format(previous_act.label))
-        print("Current event: {}".format(current_act.label))
-        set_prev_curr.add((previous_act.label, current_act.label))
-        with open('set-prev-curr.txt', 'w') as f:
-            f.write(str(set_prev_curr))
-    loops_selected = list()
+    # TODO reachability becomes useless if _new_get_dp_to_previous_event is used (and also loops)
     reachability = dict()
     # check if the two activities are contained in the same loop and save it if exists
     for loop in loops:
-        if loop.is_node_in_loop_complete_net(current_act.name) and loop.is_node_in_loop_complete_net(previous):
-            loops_selected.append(loop)
-            # check if the last activity is reacahble from the previous one (if not it means that the loop is active) 
+        if loop.is_node_in_loop_complete_net(current_act_name) and loop.is_node_in_loop_complete_net(previous_act_name):
+            # check if the last activity is reachable from the previous one (if not it means that the loop is active)
             reachability[loop.name] = loop.check_if_reachable(previous_act, current_act.name, False)
-    dp_dict = dict()
-    dp_dict, _, _ = get_dp_to_previous_event(previous_act_name, current_act, loops, loops_selected, dp_dict, reachability, dict())
 
-    return dp_dict
+    # Extracting the decision points between previous and current activities, if not already computed
+    prev_curr_key = ' ,'.join([previous_act_name, current_act_name])
+    if prev_curr_key not in stored_dicts.keys():
+        dp_dict, _ = _new_get_dp_to_previous_event(previous_act_name, current_act)
+
+        # ---------- ONLY SHORTEST PATH APPROACH (comment method call above) ----------
+        '''
+        paths = get_all_paths(previous_act_name, current_act)
+        min_length_value = min(len(paths[k]) for k in paths)
+        min_length_path = [l for k, l in paths.items() if len(l) == min_length_value][0]
+        dp_dict = dict(min_length_path)
+        old_keys = list(dp_dict.keys()).copy()
+        for dp in old_keys:
+            if len(dp.out_arcs) < 2:
+                del dp_dict[dp]
+            else:
+                dp_dict[dp.name] = dp_dict.pop(dp)
+        '''
+        # ---------- ONLY SHORTEST PATH APPROACH (comment method call above) ----------
+
+        # TODO this is just for debugging
+        print("\nPrevious event: {}".format(previous_act.label))
+        print("Current event: {}".format(current_act.label))
+        print("DPs")
+        events_trans_map = get_map_events_transitions(net)
+        for key in dp_dict.keys():
+            print(" - {}".format(key))
+            for inn_key in dp_dict[key]:
+                if inn_key in events_trans_map.keys():
+                    print("   - {}".format(events_trans_map[inn_key]))
+                else:
+                    print("   - {}".format(inn_key))
+        stored_dicts[' ,'.join([previous_act_name, current_act_name])] = dp_dict
+    else:
+        dp_dict = stored_dicts[prev_curr_key]
+
+    return dp_dict, stored_dicts
+
+
+def _new_get_dp_to_previous_event(previous, current, decision_points=None, passed_inn_arcs=None) -> [dict, bool]:
+    """ Extracts all the decision points that are traversed between two activities (previous and current), reporting the
+    decision(s) that has been taken for each of them.
+
+    Starting from the 'current' activity, the algorithm proceeds backwards on each incoming arc (in_arc). Then, it saves
+    the so-called 'inner_arcs', which are the arcs between the previous place (in_arc.source) and its previous
+    activities (in_arc.source.in_arcs).
+    If the 'previous' activity is immediately before the previous place (so it is the source of one of the inner_arcs),
+    then the algorithm set a boolean variable 'target_found' to True to signal that the target has been found, and it
+    adds the corresponding decision point (in_arc.source) to the dictionary.
+    In any case, all the other backward paths containing an invisible activity are explored recursively.
+    Every time an 'inner_arc' is traversed for exploration, it is added to the 'passed_inn_arcs' list, to avoid looping
+    endlessly. Indeed, before a new recursion on an 'inner_arc', the algorithm checks if it is present in that list:
+        1) If it is not present, it simply goes on with the recursion, since it means that the specific path has not
+           been explored yet.
+        2) Otherwise, it means that the current recursive call has already passed through that 'inner_arc' and so it
+           must stop the recursion. This also means that the path followed a loop, and so the decision points
+           encountered along that path must be added to the dictionary, since the target activity ('previous') can be
+           reached through that loop.
+    Note that decision points are then added to the dictionary in a forward way: whenever the recursion cannot go on (no
+    more invisible activities backward) it returns also signalling the 'target_found' value. This is True if the current
+    path found the target activity (or an already explored 'inner_arc' during the same path, as explained before). The
+    returned value is then put in disjunction with the current value of 'target_found' in case the target activity has
+    been found by the actual instance and not by the recursive one.
+
+    It returns a 'decision_points' dictionary which contains, for each decision point on every possible path between
+    the 'current' activity and the 'previous' activity, the target value(s) to be followed.
+    """
+
+    if decision_points is None:
+        decision_points = dict()
+    if passed_inn_arcs is None:
+        passed_inn_arcs = set()
+    target_found = False
+    for in_arc in current.in_arcs:
+        # Preparing the lists containing inner_arcs towards invisible and non-invisible transitions
+        inner_inv_acts, inner_in_arcs_names = set(), set()
+        for inner_in_arc in in_arc.source.in_arcs:
+            if inner_in_arc.source.label is None:
+                inner_inv_acts.add(inner_in_arc)
+            else:
+                inner_in_arcs_names.add(inner_in_arc.source.name)
+
+        # Base case: the target activity (previous) is one of the activities immediately before the current one
+        if previous in inner_in_arcs_names:
+            target_found = True
+            decision_points = _add_dp_target(decision_points, in_arc.source, current.name, target_found)
+        # Recursive case: follow every invisible activity backward
+        for inner_in_arc in inner_inv_acts:
+            if inner_in_arc not in passed_inn_arcs:
+                passed_inn_arcs.add(inner_in_arc)
+                decision_points, previous_found = _new_get_dp_to_previous_event(previous, inner_in_arc.source,
+                                                                                decision_points, passed_inn_arcs)
+                decision_points = _add_dp_target(decision_points, in_arc.source, current.name, previous_found)
+                passed_inn_arcs.remove(inner_in_arc)
+                target_found = target_found or previous_found
+            else:
+                target_found = True
+                decision_points = _add_dp_target(decision_points, in_arc.source, current.name, target_found)
+
+    return decision_points, target_found
+
+
+def _add_dp_target(decision_points, dp, target, previous_found):
+    """ Adds the decision point and its target activity to the 'decision_points' dictionary.
+
+    Given the 'decision_points' dictionary, the place 'dp' (in_arc.source) and the target activity name (current.name),
+    adds the target activity name to the set of targets related to the decision point. If not presents, adds the
+    decision point to the dictionary keys first.
+    This is done if the place is an actual decision point, and if the boolean variable 'previous_found' is True.
+    """
+
+    if previous_found and len(dp.out_arcs) > 1:
+        if dp.name in decision_points.keys():
+            decision_points[dp.name].add(target)
+        else:
+            decision_points[dp.name] = {target}
+    return decision_points
+
+
+def get_all_paths(previous, current, passed_places=None, passed_inn_arcs=None, paths=None):
+
+    if passed_places is None:
+        passed_places = dict()
+    if passed_inn_arcs is None:
+        passed_inn_arcs = set()
+    if paths is None:
+        paths = dict()
+
+    for in_arc in current.in_arcs:
+        # Preparing the lists containing inner_arcs towards invisible and non-invisible transitions
+        inner_inv_acts, inner_in_arcs_names = set(), set()
+        for inner_in_arc in in_arc.source.in_arcs:
+            if inner_in_arc.source.label is None:
+                inner_inv_acts.add(inner_in_arc)
+            else:
+                inner_in_arcs_names.add(inner_in_arc.source.name)
+
+        if in_arc.source not in passed_places.keys():
+            passed_places[in_arc.source] = set()
+        passed_places[in_arc.source].add(current.name)
+
+        # Base case: the target activity (previous) is one of the activities immediately before the current one
+        if previous in inner_in_arcs_names:
+            paths[len(paths)] = copy.deepcopy(passed_places)
+        else:
+            # Recursive case: follow every invisible activity backward
+            for inner_in_arc in inner_inv_acts:
+                if inner_in_arc not in passed_inn_arcs:
+                    passed_inn_arcs.add(inner_in_arc)
+                    paths = get_all_paths(previous, inner_in_arc.source, passed_places, passed_inn_arcs, paths)
+                    passed_inn_arcs.remove(inner_in_arc)
+
+        passed_places[in_arc.source].remove(current.name)
+        if len(passed_places[in_arc.source]) == 0:
+            del passed_places[in_arc.source]
+
+    return paths
+
 
 def get_dp_to_previous_event(previous, current, loops, common_loops, decision_points, reachability, passed_inv_act) -> [dict, bool, bool]:
     """ Recursively explores the net and saves the decision points encountered with the targets.
-    
+
     The backward recursion is allowed only if there is an invisbile activity and the target activity has not been reached.
-    When a loop input is encountered, if the two activities are in the same loop and the 'current' is reachable from 
+    When a loop input is encountered, if the two activities are in the same loop and the 'current' is reachable from
     the 'previous' the algorithm stops. If the two activities are not in the same loop, the algorithm chooses to exit from the loop
     otherwise if the two activities are in the same loop but 'current' is not reachable from 'previous' the algorithm chooses to remain in the
     loop (i.e. it goes back)
@@ -87,8 +228,6 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
     #print(current.in_arcs)
     #breakpoint()
     for in_arc in current.in_arcs:
-#        if current.name == 'tauJoin_14':
-#            breakpoint()
         #print(in_arc)
         #breakpoint()
         # setting previous_reached to False because we want to explore ALL the possible paths
@@ -151,7 +290,7 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
                             passed_inv_act[inner_in_arc.source.name] = {'previous_reached': previous_reached, 'not_found': not_found}
                             if not_found:
                                 if in_arc.source.name in decision_points.keys():
-                                    if current.name in decision_points[in_arc.source.name] and current.label is None: 
+                                    if current.name in decision_points[in_arc.source.name] and current.label is None:
                                         decision_points[in_arc.source.name].remove(current.name)
                         elif inner_in_arc.source.name == previous:
                             previous_reached = True
@@ -205,7 +344,7 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
                 # TODO check not found for each loop separately
                 # TODO check this condition
                 if not_found:
-                    #if current.name in decision_points[in_arc.source.name]: 
+                    #if current.name in decision_points[in_arc.source.name]:
                     #    decision_points[in_arc.source.name].remove(current.name)
                     continue
             # if i finished to check inner arcs and there is at least one previous reached: previous_reached is TRue
@@ -226,21 +365,15 @@ def get_dp_to_previous_event(previous, current, loops, common_loops, decision_po
         else:
             not_found = True
             if in_arc.source.name in decision_points.keys():
-                if current.name in decision_points[in_arc.source.name] and current.label is None: 
+                if current.name in decision_points[in_arc.source.name] and current.label is None:
                     decision_points[in_arc.source.name].remove(current.name)
         # stop if we find the target in one of the places going into a transition (they are parallel branches)
-        #if previous_reached:
-        #    break
-                
+        if previous_reached:
+            break
+
     for in_arc in current.in_arcs:
-#        if current.name == 'tauJoin_14':
-#            breakpoint()
-        for inner_in_arc in in_arc.source.in_arcs:
-            if inner_in_arc.source.name in passed_inv_act.keys():
-                if passed_inv_act[inner_in_arc.source.name]['previous_reached']:
-                    previous_reached = True
-                    not_found = False
-            elif inner_in_arc.source.name == previous:
+        if in_arc.source.name in passed_inv_act.keys():
+            if passed_inv_act[in_arc.source.name]['previous_reached']:
                 previous_reached = True
                 not_found = False
     return decision_points, not_found, previous_reached
@@ -263,7 +396,7 @@ def get_map_place_to_events(net, loops) -> dict:
     """ Gets a mapping of decision point and their target transitions
 
     Given a Petri Net in the implementation of Pm4Py library and the loops inside,
-    computes the target transtion for every decision point 
+    computes the target transtion for every decision point
     (i.e. a place with more than one out arcs). If a target is a silent transition,
     the next not silent transitions are taken as added targets, following rules regarding loops if present.
     """
@@ -271,7 +404,7 @@ def get_map_place_to_events(net, loops) -> dict:
     places = dict()
     for place in net.places:
         if len(place.out_arcs) >= 2:
-            # dictionary containing for every decision point target categories 
+            # dictionary containing for every decision point target categories
             places[place.name] = dict()
             # loop for out arcs
             for arc in place.out_arcs:
@@ -310,8 +443,8 @@ def get_next_not_silent(place, not_silent, loops, start_places, loop_name_start)
 
     Given a place and a list of not silent transition (i.e. without label) computes
     the next not silent transitions in order to correctly characterize the path through
-    the considered place. The algorithm stops in presence of a joint-node (if not in a loop) 
-    or when all of the output transitions are not silent. If at least one transition is 
+    the considered place. The algorithm stops in presence of a joint-node (if not in a loop)
+    or when all of the output transitions are not silent. If at least one transition is
     silent, the algorithm computes recursively the next not silent.
     """
     # first stop condition: joint node
@@ -358,11 +491,11 @@ def get_next_not_silent(place, not_silent, loops, start_places, loop_name_start)
 def get_place_from_event(places_map, event, dp_list) -> list:
     """ Returns the places that are decision points of a certain transition
 
-    Given the dictionary mapping every decision point with its reference event(s), 
+    Given the dictionary mapping every decision point with its reference event(s),
     returns the list of decision point referred to the input event
     """
 
-    places = list() 
+    places = list()
     for place in dp_list:
         for trans in places_map[place].keys():
             if event in places_map[place][trans]:
@@ -393,12 +526,12 @@ def extract_rules(dt, feature_names) -> dict:
 
     Given a sklearn decision tree object and the name of the features used, interprets
     the output text of export_text (sklearn function) in order to give the user a more
-    human readable version of the rules defining the decision tree behavior. The output 
+    human readable version of the rules defining the decision tree behavior. The output
     is a dictionary using as key the target class (leaves) of the decision tree.
     """
     text_rules = export_text(dt)
     for feature_name in feature_names.keys():
-            text_rules = text_rules.replace(feature_names[feature_name], feature_name) 
+            text_rules = text_rules.replace(feature_names[feature_name], feature_name)
     text_rules = text_rules.split('\n')[:-1]
     extracted_rules = dict()
     one_complete_pass = ""
@@ -465,7 +598,7 @@ def get_map_events_transitions(net) -> dict:
 def check_if_reachable_without_loops(loops, start_trans, end_trans, reachable) -> bool:
     """ Check if a transition is reachable from another one without using loops
 
-    Given a list of Loop ojects, recursively check if a transition is reachable from another one without looping 
+    Given a list of Loop ojects, recursively check if a transition is reachable from another one without looping
     and using only invisible transitions. This means that if a place is an output place for a loop, the algorithm
     chooses to follow the path exiting the loop
     """
@@ -501,11 +634,11 @@ def update_places_map_dp_list_if_looping(net, dp_list, places_map, loops, event_
     """ Updates the map of transitions related to a decision point in case a loop is active
 
     Given an event sequence, checks if there are active loops (i.e. the sequence is reproducible only
-    passing two times from an input place. In case of acitve loops, in what part of the loop is located the current activity 
+    passing two times from an input place. In case of acitve loops, in what part of the loop is located the current activity
     and assigns to the decision points the transitions that identify if the path passed through that decision point.
     For example if a loop is:
            -   A    -           -   B    -
-    dp0 - |          | - dp1 - |          | - dp2 - 
+    dp0 - |          | - dp1 - |          | - dp2 -
     |       - silent -           - silent -        |
     |                                              |
     ------------------- silent --------------------
@@ -519,7 +652,7 @@ def update_places_map_dp_list_if_looping(net, dp_list, places_map, loops, event_
         loop.check_if_loop_is_active(net, transition_sequence)
         if loop.is_active():
             # update the dictionary only if the loop is actually "looping°
-            # (i.e. the number of cycle is growing) -> because a decision point can be 
+            # (i.e. the number of cycle is growing) -> because a decision point can be
             # chosen only one time per cycle
             loop.count_number_of_loops(net, transition_sequence.copy())
             if number_of_loops[loop.name] < loop.number_of_loops:
@@ -533,7 +666,7 @@ def update_places_map_dp_list_if_looping(net, dp_list, places_map, loops, event_
                         if loop.is_vertex_in_loop(trans):
                             if trans in loop.dp_forward[dp].keys():
                                 if event_sequence[-1] in loop.dp_forward[dp][trans]:
-                                    # update only if the decision point is connected to an invisible activity 
+                                    # update only if the decision point is connected to an invisible activity
                                     # (i.e. related to a set of activities not just one)
                                     if isinstance(places_map[dp][trans], set):
                                         places_map[dp][trans] = places_map[dp][trans].difference(loop.events)
@@ -547,13 +680,13 @@ def update_places_map_dp_list_if_looping(net, dp_list, places_map, loops, event_
                         if loop.is_vertex_in_loop(trans):
                             if trans in loop.dp_backward[dp].keys():
                                 if event_sequence[-1] in loop.dp_backward[dp][trans]:
-                                    # update only if the decision point is connected to an invisible activity 
+                                    # update only if the decision point is connected to an invisible activity
                                     # (i.e. related to a set of activities not just one)
                                     if isinstance(places_map[dp][trans], set):
                                         places_map[dp][trans] = places_map[dp][trans].difference(loop.events)
                                         places_map[dp][trans] = places_map[dp][trans].union(loop_reachable[dp][trans])
     return places_map, dp_list
-        
+
 def update_dp_list(places_from_event, dp_list) -> list:
     """ Updates the list of decision points if related with the event
 
@@ -565,56 +698,49 @@ def update_dp_list(places_from_event, dp_list) -> list:
             dp_list.remove(place)
     return dp_list
 
-def get_all_dp_from_event_to_sink(event, loops, places, act_inv_already_seen) -> list:
-    """ Returns all the decision points from the event to the sink, passing through invisible transitions
 
-    Given an event, recursively explore the net collecting decision points and related invisible transitions
-    that need to be passed in order to reach the sink place. If a loop is encountered, the algorithm choose to 
-    exit at the first output seen.
+def get_all_dp_from_event_to_sink(transition, sink) -> dict:
+    """ Returns all the decision points in the path from the 'transition' activity to the sink of the Petri net, passing
+    only through invisible transitions.
+
+    Starting from the sink, extracts all the transitions connected to the sink (the ones immediately before the sink).
+    If 'transition' is one of them, there are no decision points to return, so it returns an empty dictionary.
+    Otherwise, for each invisible transition among them, it calls method '_new_get_dp_to_previous_event' to retrieve
+    all the decision points and related targets between 'transition' and the invisible transition currently considered.
+    Discovered decision points for all the backward paths are put in the same 'decision_points' dictionary.
     """
-    #breakpoint()
-    for out_arc in event.out_arcs:
-        if out_arc.target.name == 'sink':
-           return places
-        else:
-            #is_output = False
-#            for loop in loops:
-#                if loop.is_vertex_output_loop(out_arc.target.name):
-#                    is_output = True
-#                    loop_selected = loop
-            for out_arc_inn in out_arc.target.out_arcs:
-                places_length_before = sum([len(places[place]) for place in places.keys()])
-                # if invisible transition
-                for loop in loops:
-                    if (not loop.is_output_node_complete_net(out_arc.target.name) and loop.is_node_in_loop_complete_net(out_arc_inn.target.name)) or (loop.is_output_node_complete_net(out_arc.target.name) and not loop.is_node_in_loop_complete_net(out_arc_inn.target.name)):
-                        if out_arc_inn.target.label is None and not out_arc_inn.target.name in act_inv_already_seen:
-                    # if it is a decision point append to the list and recurse
-#                    if len(out_arc.target.out_arcs) > 1:
-#                        places.append((out_arc.target.name, out_arc_inn.target.name))
-                    # if is not an output of the considered loop
-                        #if loop.is_vertex_output_loop(out_arc.target.name):
-                            act_inv_already_seen.add(out_arc_inn.target.name)
-                            if len(out_arc.target.out_arcs) > 1:
-                                if not out_arc.target.name in places.keys():
-                                    places[out_arc.target.name] = {out_arc_inn.target.name}
-                                else:
-                                    places[out_arc.target.name].add(out_arc_inn.target.name)
-                                #places.append((out_arc.target.name, out_arc_inn.target.name))
-                            #is_output = True
-                            #loop_selected = loop
-                        #if not is_output or (is_output and not loop_selected.is_vertex_in_loop(out_arc_inn.target.name)):
-                            places = get_all_dp_from_event_to_sink(out_arc_inn.target, loops, places, act_inv_already_seen)
-                # if anything changes, means that the cycle stopped: remove the last tuple appended
-                            total_number_items = sum([len(places[place]) for place in places.keys()])
-                            if total_number_items == places_length_before and total_number_items > 0:
-                                if out_arc.target.name in places.keys():
-                                    if out_arc_inn.target.name in places[out_arc.target.name]:
-                                        places[out_arc.target.name].remove(out_arc_inn.target.name)
-    return places
-    
+
+    sink_in_acts = [in_arc.source for in_arc in sink.in_arcs]
+    if transition in sink_in_acts:
+        return dict()
+    else:
+        decision_points = dict()
+
+        for sink_in_act in sink_in_acts:
+            if sink_in_act.label is None:
+                decision_points, _ = _new_get_dp_to_previous_event(transition, sink_in_act, decision_points)
+
+                # ---------- ONLY SHORTEST PATH APPROACH (comment method call above) ----------
+                '''
+                paths = get_all_paths(transition.name, sink_in_act)
+                min_length_value = min(len(paths[k]) for k in paths)
+                min_length_path = [l for k, l in paths.items() if len(l) == min_length_value][0]
+                decision_points = dict(min_length_path)
+                old_keys = list(decision_points.keys()).copy()
+                for dp in old_keys:
+                    if len(dp.out_arcs) < 2:
+                        del decision_points[dp]
+                    else:
+                        decision_points[dp.name] = decision_points.pop(dp)
+                '''
+                # ---------- ONLY SHORTEST PATH APPROACH (comment method call above) ----------
+
+        return decision_points
+
+
 def check_if_skip(place) -> bool:
     """ Checks if a place is a 'skip'
-    
+
     A place is a 'skip' if has N input arcs of which only one is an invisible activity and all
     are coming from the same place
     """
@@ -695,6 +821,8 @@ def discover_overlapping_rules(base_tree, dataset, attributes_map, original_rule
     Leoni, Hajo A. Reijers, Wil M.P. van der Aalst (2016).
     """
 
+    rules = copy.deepcopy(original_rules)
+
     leaf_nodes = base_tree.get_leaves_nodes()
     leaf_nodes_with_wrong_instances = [ln for ln in leaf_nodes if len(ln.get_class_names()) > 1]
 
@@ -728,51 +856,118 @@ def discover_overlapping_rules(base_tree, dataset, attributes_map, original_rule
         if len(sub_leaf_nodes) > 1:
             sub_rules = {}
             for sub_leaf_node in sub_leaf_nodes:
-                new_rule = ' && '.join(vertical_rules + [extract_rules_from_leaf(sub_leaf_node)])
+                new_rule = ' && '.join(vertical_rules + extract_rules_from_leaf(sub_leaf_node))
                 if sub_leaf_node._label_class not in sub_rules.keys():
                     sub_rules[sub_leaf_node._label_class] = set()
                 sub_rules[sub_leaf_node._label_class].add(new_rule)
             for sub_target_class in sub_rules.keys():
                 sub_rules[sub_target_class] = ' || '.join(sub_rules[sub_target_class])
-                original_rules[sub_target_class] += ' || ' + sub_rules[sub_target_class]
+                if sub_target_class not in rules.keys():
+                    rules[sub_target_class] = sub_rules[sub_target_class]
+                else:
+                    rules[sub_target_class] += ' || ' + sub_rules[sub_target_class]
         # Only root in sub_tree = could not find a suitable split of the root node -> most frequent target is chosen
         elif len(wrong_instances) > 0:  # length 0 could happen since we do not consider missing values for now
             sub_target_class = wrong_instances['target'].mode()[0]
-            if sub_target_class not in original_rules.keys():
-                original_rules[sub_target_class] = ' && '.join(vertical_rules)
+            if sub_target_class not in rules.keys():
+                rules[sub_target_class] = ' && '.join(vertical_rules)
             else:
-                original_rules[sub_target_class] += ' || ' + ' && '.join(vertical_rules)
+                rules[sub_target_class] += ' || ' + ' && '.join(vertical_rules)
 
-    return original_rules
+    return rules
 
 
-def compress_many_valued_attributes(rules, attributes_map):
-    """ Rewrites the final rules dictionary to compress disjunctions of many-valued categorical attributes equalities
+def shorten_rules_manually(original_rules, attributes_map):
+    """ Rewrites the final rules dictionary to compress many-valued categorical attributes equalities and continuous
+    attributes inequalities.
 
-    For example, a series of atoms "org:resource = 10 || org:resource = 144 || org:resource = 68 || org:resource = 43 ||
-    org:resource == 632" is rewritten as "org:resource one of [10, 144, 68, 43, 632]"
+    For example, the series "org:resource = 10 && org:resource = 144 && org:resource = 68" is rewritten as "org:resource
+    one of [10, 68, 144]".
+    The series "paymentAmount > 21.0 && paymentAmount <= 37.0 && paymentAmount <= 200.0 && amount > 84.0 && amount <=
+    138.0 && amount > 39.35" is rewritten as "paymentAmount > 21.0 && paymentAmount <= 37.0 && amount <= 138.0 && amount
+    84.0"
     """
 
+    rules = copy.deepcopy(original_rules)
+
     for target_class in rules.keys():
-        atoms = rules[target_class].split(' || ')
-        atoms_to_remove = dict()
-        cat_atoms_same_attr = dict()
-        for atom in atoms:
-            if ' && ' not in atom:
-                a_attr, a_comp, a_value = atom.split(' ')
-                if a_comp == '=' and attributes_map[a_attr] == 'categorical':
-                    if a_attr not in cat_atoms_same_attr.keys():
-                        cat_atoms_same_attr[a_attr] = list()
-                        atoms_to_remove[a_attr] = list()
-                    cat_atoms_same_attr[a_attr].append(a_value)
-                    atoms_to_remove[a_attr].append(atom)
+        or_atoms = rules[target_class].split(' || ')
+        new_target_rule = list()
+        cat_atoms_same_attr_noand = dict()
 
-        compressed_rules = list()
-        for attr in cat_atoms_same_attr:
-            if len(cat_atoms_same_attr[attr]) > 1:
-                compressed_rules.append(attr + ' one of [' + ', '.join(sorted(cat_atoms_same_attr[attr])) + ']')
-                atoms = [a for a in atoms if a not in atoms_to_remove[attr]]
+        for or_atom in or_atoms:
+            if ' && ' in or_atom:
+                and_atoms = or_atom.split(' && ')
+                cat_atoms_same_attr = dict()
+                cont_atoms_same_attr_less, cont_atoms_same_attr_greater = dict(), dict()
+                cont_comp_less_equal, cont_comp_greater_equal = dict(), dict()
+                new_or_atom = list()
 
-        rules[target_class] = ' || '.join(atoms + compressed_rules)
+                for and_atom in and_atoms:
+                    a_attr, a_comp, a_value = and_atom.split(' ')
+                    # Storing information for many-values categorical attributes equalities
+                    if attributes_map[a_attr] == 'categorical' and a_comp == '=':
+                        if a_attr not in cat_atoms_same_attr.keys():
+                            cat_atoms_same_attr[a_attr] = list()
+                        cat_atoms_same_attr[a_attr].append(a_value)
+                    # Storing information for continuous attributes inequalities (min/max value for each attribute and
+                    # also if the inequality is strict or not)
+                    elif attributes_map[a_attr] == 'continuous':
+                        if a_comp in ['<', '<=']:
+                            if a_attr not in cont_atoms_same_attr_less.keys() or float(a_value) <= float(cont_atoms_same_attr_less[a_attr]):
+                                cont_atoms_same_attr_less[a_attr] = a_value
+                                cont_comp_less_equal[a_attr] = True if a_comp == '<=' else False
+                        elif a_comp in ['>', '>=']:
+                            if a_attr not in cont_atoms_same_attr_greater.keys() or float(a_value) >= float(cont_atoms_same_attr_greater[a_attr]):
+                                cont_atoms_same_attr_greater[a_attr] = a_value
+                                cont_comp_greater_equal[a_attr] = True if a_comp == '>=' else False
+                    else:
+                        new_or_atom.append(and_atom)
 
+                # Compressing many-values categorical attributes equalities
+                for attr in cat_atoms_same_attr.keys():
+                    if len(cat_atoms_same_attr[attr]) > 1:
+                        new_or_atom.append(attr + ' one of [' + ', '.join(sorted(cat_atoms_same_attr[attr])) + ']')
+                    else:
+                        new_or_atom.append(attr + ' = ' + cat_atoms_same_attr[attr][0])
+
+                # Compressing continuous attributes inequalities (< / <= and then > / >=)
+                for attr in cont_atoms_same_attr_less.keys():
+                    min_value = cont_atoms_same_attr_less[attr]
+                    comp = ' <= ' if cont_comp_less_equal[attr] else ' < '
+                    new_or_atom.append(attr + comp + min_value)
+
+                for attr in cont_atoms_same_attr_greater.keys():
+                    max_value = cont_atoms_same_attr_greater[attr]
+                    comp = ' >= ' if cont_comp_greater_equal[attr] else ' > '
+                    new_or_atom.append(attr + comp + max_value)
+
+                # Or-atom analyzed: putting its new and-atoms in conjunction
+                new_target_rule.append(' && ' .join(new_or_atom))
+
+            # If the or_atom does not have &&s inside (single atom), just simplify categorical attributes.
+            # For example, the series "org:resource = 10 || org:resource = 144 || org:resource = 68" is rewritten as
+            # "org:resource one of [10, 68, 144]".
+            # Here the values for each attribute are added to the 'cat_atoms_same_attr_noand' dictionary.
+            else:
+                a_attr, a_comp, a_value = or_atom.split(' ')
+                # Storing information for many-values categorical attributes equalities
+                if attributes_map[a_attr] == 'categorical' and a_comp == '=':
+                    if a_attr not in cat_atoms_same_attr_noand.keys():
+                        cat_atoms_same_attr_noand[a_attr] = list()
+                    cat_atoms_same_attr_noand[a_attr].append(a_value)
+                else:
+                    new_target_rule.append(or_atom)
+
+        # Compressing many-values categorical attributes equalities for the 'no &&s' case
+        for attr in cat_atoms_same_attr_noand.keys():
+            if len(cat_atoms_same_attr_noand[attr]) > 1:
+                new_target_rule.append(attr + ' one of [' + ', '.join(sorted(cat_atoms_same_attr_noand[attr])) + ']')
+            else:
+                new_target_rule.append(attr + ' = ' + cat_atoms_same_attr_noand[attr][0])
+
+        # Rule for a target class analyzed: putting its new or-atoms in disjunction
+        rules[target_class] = ' || '.join(new_target_rule)
+
+    # Rules for all target classes analyzed: returning the new rules dictionary
     return rules
