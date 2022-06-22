@@ -502,23 +502,19 @@ def get_place_from_event(places_map, event, dp_list) -> list:
                 places.append((place, trans))
     return places
 
-def get_attributes_from_event(event) -> dict:
-    """ Return the attributes of an event
 
-    Given an attribute of an event in an event log, returns a dictionary
-    containing the attribute of an event, numeric if it is possible
+def get_attributes_from_event(event) -> dict:
+    """ Given an event from an event log, returns a dictionary containing the attributes values of the given event.
+
+    Each attribute is set as key of the dictionary, and its value is the actual value of the attribute in the event.
+    Attributes 'time:timestamp' and 'concept:name' are ignored and therefore not added to the dictionary.
     """
-    # TODO specify what are numeric/categorical attributes in order not to try every time (also maybe a code is not numeric)
-    # intialize
+
     attributes = dict()
     for attribute in event.keys():
-        if not isinstance(event[attribute], bool):
-            try:
-                attributes[attribute] = [float(event[attribute])]
-            except:
-                attributes[attribute] = [event[attribute]]
-        else:
-            attributes[attribute] = [event[attribute]]
+        if attribute not in ['time:timestamp', 'concept:name']:
+            attributes[attribute] = event[attribute]
+
     return attributes
 
 def extract_rules(dt, feature_names) -> dict:
@@ -847,7 +843,7 @@ def discover_overlapping_rules(base_tree, dataset, attributes_map, original_rule
         leaf_instances = dataset.query(vertical_rules_query)
         # TODO not considering missing values for now, so wrong_instances could be empty
         # This happens because all the wrongly classified instances have missing values for the query attribute(s)
-        wrong_instances = leaf_instances[leaf_instances['target'] != leaf_node._label_class]
+        wrong_instances = (leaf_instances[leaf_instances['target'] != leaf_node._label_class]).copy()
 
         sub_tree = DecisionTree(attributes_map)
         sub_tree.fit(wrong_instances)
@@ -885,7 +881,8 @@ def shorten_rules_manually(original_rules, attributes_map):
     one of [10, 68, 144]".
     The series "paymentAmount > 21.0 && paymentAmount <= 37.0 && paymentAmount <= 200.0 && amount > 84.0 && amount <=
     138.0 && amount > 39.35" is rewritten as "paymentAmount > 21.0 && paymentAmount <= 37.0 && amount <= 138.0 && amount
-    84.0"
+    84.0".
+    The same reasoning is applied for atoms without '&&s' inside.
     """
 
     rules = copy.deepcopy(original_rules)
@@ -894,6 +891,8 @@ def shorten_rules_manually(original_rules, attributes_map):
         or_atoms = rules[target_class].split(' || ')
         new_target_rule = list()
         cat_atoms_same_attr_noand = dict()
+        cont_atoms_same_attr_less_noand, cont_atoms_same_attr_greater_noand = dict(), dict()
+        cont_comp_less_equal_noand, cont_comp_greater_equal_noand = dict(), dict()
 
         for or_atom in or_atoms:
             if ' && ' in or_atom:
@@ -945,10 +944,9 @@ def shorten_rules_manually(original_rules, attributes_map):
                 # Or-atom analyzed: putting its new and-atoms in conjunction
                 new_target_rule.append(' && ' .join(new_or_atom))
 
-            # If the or_atom does not have &&s inside (single atom), just simplify categorical attributes.
+            # If the or_atom does not have &&s inside (single atom), just simplify attributes.
             # For example, the series "org:resource = 10 || org:resource = 144 || org:resource = 68" is rewritten as
-            # "org:resource one of [10, 68, 144]".
-            # Here the values for each attribute are added to the 'cat_atoms_same_attr_noand' dictionary.
+            # "org:resource one of [10, 68, 144]". For continuous attributes, follows the same reasoning as before.
             else:
                 a_attr, a_comp, a_value = or_atom.split(' ')
                 # Storing information for many-values categorical attributes equalities
@@ -956,6 +954,15 @@ def shorten_rules_manually(original_rules, attributes_map):
                     if a_attr not in cat_atoms_same_attr_noand.keys():
                         cat_atoms_same_attr_noand[a_attr] = list()
                     cat_atoms_same_attr_noand[a_attr].append(a_value)
+                elif attributes_map[a_attr] == 'continuous':
+                    if a_comp in ['<', '<=']:
+                        if a_attr not in cont_atoms_same_attr_less_noand.keys() or float(a_value) <= float(cont_atoms_same_attr_less_noand[a_attr]):
+                            cont_atoms_same_attr_less_noand[a_attr] = a_value
+                            cont_comp_less_equal_noand[a_attr] = True if a_comp == '<=' else False
+                    elif a_comp in ['>', '>=']:
+                        if a_attr not in cont_atoms_same_attr_greater_noand.keys() or float(a_value) >= float(cont_atoms_same_attr_greater_noand[a_attr]):
+                            cont_atoms_same_attr_greater_noand[a_attr] = a_value
+                            cont_comp_greater_equal_noand[a_attr] = True if a_comp == '>=' else False
                 else:
                     new_target_rule.append(or_atom)
 
@@ -965,6 +972,17 @@ def shorten_rules_manually(original_rules, attributes_map):
                 new_target_rule.append(attr + ' one of [' + ', '.join(sorted(cat_atoms_same_attr_noand[attr])) + ']')
             else:
                 new_target_rule.append(attr + ' = ' + cat_atoms_same_attr_noand[attr][0])
+
+        # Compressing continuous attributes inequalities (< / <= and then > / >=) for the 'no &&s' case
+        for attr in cont_atoms_same_attr_less_noand.keys():
+            min_value = cont_atoms_same_attr_less_noand[attr]
+            comp = ' <= ' if cont_comp_less_equal_noand[attr] else ' < '
+            new_target_rule.append(attr + comp + min_value)
+
+        for attr in cont_atoms_same_attr_greater_noand.keys():
+            max_value = cont_atoms_same_attr_greater_noand[attr]
+            comp = ' >= ' if cont_comp_greater_equal_noand[attr] else ' > '
+            new_target_rule.append(attr + comp + max_value)
 
         # Rule for a target class analyzed: putting its new or-atoms in disjunction
         rules[target_class] = ' || '.join(new_target_rule)
