@@ -105,6 +105,38 @@ def main():
     trans_events_map = get_map_transitions_events(net)
     events_trans_map = get_map_events_transitions(net)
 
+    # Parallel branches MANUALLY for ROAD FINES PROM
+    parallel_branches = dict()
+    parallel_branches['Create Fine'] = dict()
+    parallel_branches['Create Fine']['branch_1'] = {'skip_1', trans_events_map['Send Appeal to Prefecture']}
+    parallel_branches['Create Fine']['branch_2'] = {trans_events_map['Insert Fine Notification'],
+                                                    trans_events_map['Send Fine'],
+                                                    trans_events_map['Insert Date Appeal to Prefecture'],
+                                                    trans_events_map['Appeal to Judge'],
+                                                    trans_events_map['Receive Result Appeal from Prefecture'],
+                                                    trans_events_map['Notify Result Appeal to Offender'],
+                                                    trans_events_map['Add penalty'],
+                                                    trans_events_map['Send for Credit Collection']}
+    parallel_branches['Create Fine']['branch_3'] = {trans_events_map['Payment'], trans_events_map['Send for Credit Collection']}
+
+    parallel_branches['tauSplit_1'] = dict()
+    parallel_branches['tauSplit_1']['branch_1'] = {trans_events_map['Insert Fine Notification'],
+                                                   trans_events_map['Appeal to Judge'],
+                                                   trans_events_map['Receive Result Appeal from Prefecture'],
+                                                   trans_events_map['Notify Result Appeal to Offender'],
+                                                   trans_events_map['Add penalty']}
+    parallel_branches['tauSplit_1']['branch_2'] = {trans_events_map['Send Fine']}
+    parallel_branches['tauSplit_1']['branch_3'] = {trans_events_map['Insert Date Appeal to Prefecture']}
+
+    parallel_branches['tauSplit_2'] = dict()
+    parallel_branches['tauSplit_2']['branch_1'] = {trans_events_map['Appeal to Judge']}
+    parallel_branches['tauSplit_2']['branch_2'] = {trans_events_map['Receive Result Appeal from Prefecture']}
+    parallel_branches['tauSplit_2']['branch_3'] = {trans_events_map['Notify Result Appeal to Offender'],
+                                                   trans_events_map['Add penalty']}
+    parallel_branches['tauSplit_3'] = dict()
+    parallel_branches['tauSplit_3']['branch_1'] = {trans_events_map['Notify Result Appeal to Offender']}
+    parallel_branches['tauSplit_3']['branch_2'] = {trans_events_map['Add penalty']}
+
 #    # detect loops and create loop objects
 #    loop_vertex = detect_loops(sim_net)
 #    loop_vertex = delete_composite_loops(loop_vertex)
