@@ -740,7 +740,7 @@ def get_all_dp_from_event_to_sink(transition, sink, decision_points_seen) -> dic
 
         for sink_in_act in sink_in_acts:
             if sink_in_act.label is None:
-                decision_points = _get_dp_to_previous_event_from_sink(transition, sink_in_act, dp_seen, decision_points)
+                decision_points, _ = _get_dp_to_previous_event_from_sink(transition, sink_in_act, dp_seen, decision_points)
 
                 # ---------- ONLY SHORTEST PATH APPROACH (comment method call above) ----------
                 '''
@@ -760,12 +760,13 @@ def get_all_dp_from_event_to_sink(transition, sink, decision_points_seen) -> dic
         return decision_points
 
 
-def _get_dp_to_previous_event_from_sink(previous, current, dp_seen, decision_points=None, passed_inn_arcs=None) -> dict:
+def _get_dp_to_previous_event_from_sink(previous, current, dp_seen, decision_points=None, passed_inn_arcs=None) -> [dict, bool]:
 
     if decision_points is None:
         decision_points = dict()
     if passed_inn_arcs is None:
         passed_inn_arcs = set()
+    target_found = False
     for in_arc in current.in_arcs:
         # If decision point already seen in variant, stop following this path
         if in_arc.source.name in dp_seen:
@@ -776,17 +777,19 @@ def _get_dp_to_previous_event_from_sink(previous, current, dp_seen, decision_poi
             if inner_in_arc.source.label is None:
                 if inner_in_arc not in passed_inn_arcs:
                     passed_inn_arcs.add(inner_in_arc)
-                    decision_points = _get_dp_to_previous_event_from_sink(previous, inner_in_arc.source, dp_seen,
-                                                                          decision_points, passed_inn_arcs)
+                    decision_points, previous_found = _get_dp_to_previous_event_from_sink(previous, inner_in_arc.source,
+                                                                                          dp_seen, decision_points,
+                                                                                          passed_inn_arcs)
                     decision_points = _add_dp_target(decision_points, in_arc.source, current.name, True)
                     passed_inn_arcs.remove(inner_in_arc)
+                    target_found = target_found or previous_found
                 else:
                     decision_points = _add_dp_target(decision_points, in_arc.source, current.name, True)
             # Otherwise, just add the decision point and its target activity
             else:
                 decision_points = _add_dp_target(decision_points, in_arc.source, current.name, True)
 
-    return decision_points
+    return decision_points, target_found
 
 
 def check_if_skip(place) -> bool:
@@ -1044,3 +1047,27 @@ def shorten_rules_manually(original_rules, attributes_map):
 
     # Rules for all target classes analyzed: returning the new rules dictionary
     return rules
+
+
+def sampling_dataset(dataset) -> pd.DataFrame:
+    """ Performs sampling to obtain a balanced dataset, in terms of target values. """
+
+    dataset = dataset.copy()
+
+    groups = list()
+    grouped_df = dataset.groupby('target')
+    for target_value in dataset['target'].unique():
+        groups.append(grouped_df.get_group(target_value))
+    groups.sort(key=len)
+    # Groups is a list containing a dataset for each target value, ordered by length
+    # If the smaller datasets are less than the 35% of the total dataset length, then apply the sampling
+    if sum(len(group) for group in groups[:-1]) / len(dataset) <= 0.35:
+        samples = list()
+        # Each smaller dataset is appended to the 'samples' list, along with a sampled dataset from the largest one
+        for group in groups[:-1]:
+            samples.append(group)
+            samples.append(groups[-1].sample(len(group)))
+        # The datasets in the 'samples' list are then concatenated together
+        dataset = pd.concat(samples, ignore_index=True)
+
+    return dataset
